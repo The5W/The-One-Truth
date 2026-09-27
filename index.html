@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The5W — Bayt al-Hikmah</title>
     
-    <!-- Google Fonts: Inter for UI, Amiri for classic Middle-Eastern scholarly vibe -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -61,27 +61,24 @@
 
     <style>
         body {
-            background-color: #080503; /* Warna dasar diubah menjadi rona kayu mahoni yang sangat gelap */
-            overflow: hidden; /* Disable default scrolling */
+            background-color: #080503;
+            overflow: hidden;
         }
 
-        /* ASTROLABE BACKGROUND (New) */
+        /* Astrolabe Background */
         .astrolabe-bg {
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 130vmin; /* Responsive size based on viewport */
-            height: 130vmin;
+            width: 130vmin; height: 130vmin;
             pointer-events: none;
             z-index: 1;
-            opacity: 0.18; /* Sangat redup agar misterius dan tidak mengganggu teks */
-            /* Efek vignette agar astrolabe memudar ke hitam di bagian pinggirnya */
+            opacity: 0.18;
             mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 65%);
             -webkit-mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 65%);
         }
 
-        /* Warm Candlelight Ambient Glow */
+        /* Ambient Glow */
         .warm-ambient {
             position: fixed;
             top: 50%; left: 50%;
@@ -93,7 +90,7 @@
             transition: background 1.5s ease-in-out;
         }
 
-        /* Soft Film Grain */
+        /* Noise Overlay */
         .noise-overlay {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -103,11 +100,10 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* SLIDE TRANSITIONS */
+        /* Slides */
         .slide-container {
             position: relative;
-            width: 100vw;
-            height: 100vh;
+            width: 100vw; height: 100vh;
             z-index: 10;
         }
 
@@ -123,41 +119,25 @@
             transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .slide.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
+        .slide.active { opacity: 1; visibility: visible; transform: translateY(0); }
+        .slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-40px); }
+        .slide.exit-down { opacity: 0; visibility: hidden; transform: translateY(40px); }
+
+        /* Arabic Ink Reveal */
+        .arabic-ink {
+            clip-path: inset(0 0 0 100%);
+            -webkit-clip-path: inset(0 0 0 100%);
+            transition: clip-path 3.5s cubic-bezier(0.4, 0, 0.2, 1), -webkit-clip-path 3.5s cubic-bezier(0.4, 0, 0.2, 1), filter 3.5s ease-out;
+            filter: blur(2px) brightness(1.5);
         }
 
-        .slide.exit-up {
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-40px);
+        .arabic-ink.reveal {
+            clip-path: inset(0 0 0 0%);
+            -webkit-clip-path: inset(0 0 0 0%);
+            filter: blur(0px) brightness(1);
         }
 
-        .slide.exit-down {
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(40px);
-        }
-
-        /* ARABIC TEXT ANIMATION CLASS */
-        .arabic-word {
-            opacity: 0;
-            transform: translateX(15px);
-            filter: blur(4px);
-            transition: all 1.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-            display: inline-block;
-            white-space: pre;
-        }
-
-        .arabic-word.reveal {
-            opacity: 1;
-            transform: translateX(0);
-            filter: blur(0);
-        }
-
-        /* INITIAL SPLASH SCREEN FOR AUDIO PLAY */
+        /* Splash Screen */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -174,74 +154,43 @@
 </head>
 <body class="text-stone-400 font-sans antialiased selection:bg-amber-900/40 selection:text-amber-100">
 
-    <!-- SPLASH SCREEN TO ALLOW AUTOPLAY -->
+    <!-- Splash Screen -->
     <div id="splash-screen">
         <h1 class="font-display text-3xl md:text-5xl text-amber-600/80 mb-6 drop-shadow-[0_0_15px_rgba(217,119,6,0.3)]">بيت الحكمة</h1>
         <p class="text-stone-500 font-light tracking-[0.3em] uppercase text-xs md:text-sm animate-pulse-slow">Tap to Enter the Sanctuary</p>
     </div>
 
-    <!-- AUDIO ELEMENT -->
+    <!-- Audio -->
     <audio id="bg-music" loop crossorigin="anonymous">
         <source src="https://raw.githubusercontent.com/The5W/The-One-Truth/main/Desert%20Journey.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- NEW ASTROLABE BACKGROUND -->
+    <!-- Astrolabe SVG -->
     <div class="astrolabe-bg">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" class="w-full h-full">
-            <!-- Center Pivot Outline -->
             <circle cx="400" cy="400" r="395" fill="none" stroke="#78350f" stroke-width="1" />
-            
-            <!-- Mater (Outer rims and degrees) -->
             <circle cx="400" cy="400" r="380" fill="none" stroke="#b45309" stroke-width="4" />
             <circle cx="400" cy="400" r="370" fill="none" stroke="#d97706" stroke-width="1" stroke-dasharray="4 6" />
             <circle cx="400" cy="400" r="360" fill="none" stroke="#b45309" stroke-width="2" />
-            
-            <!-- Degree Ticks -->
             <circle cx="400" cy="400" r="375" fill="none" stroke="#f59e0b" stroke-width="10" stroke-dasharray="1 9.8" opacity="0.6" />
-            <circle cx="400" cy="400" r="365" fill="none" stroke="#f59e0b" stroke-width="5" stroke-dasharray="2 18" opacity="0.4" />
             
-            <!-- Rete (Rotating Star Map) -->
             <g class="animate-[spin_180s_linear_infinite]" transform-origin="400 400">
-                <!-- Ecliptic Circle (Off-center inside the Rete) -->
                 <circle cx="400" cy="270" r="110" fill="none" stroke="#d97706" stroke-width="2" />
-                <circle cx="400" cy="270" r="100" fill="none" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4 4" />
-                
-                <!-- Intricate Arches of the Rete -->
                 <path d="M 80 400 A 320 320 0 0 1 720 400" fill="none" stroke="#92400e" stroke-width="2" />
                 <path d="M 120 400 A 280 280 0 0 0 680 400" fill="none" stroke="#92400e" stroke-width="1.5" />
-                
                 <path d="M 400 80 Q 500 200 650 250" fill="none" stroke="#b45309" stroke-width="1.5" />
                 <path d="M 400 80 Q 300 200 150 250" fill="none" stroke="#b45309" stroke-width="1.5" />
                 <path d="M 400 720 Q 500 600 650 550" fill="none" stroke="#b45309" stroke-width="1.5" />
                 <path d="M 400 720 Q 300 600 150 550" fill="none" stroke="#b45309" stroke-width="1.5" />
-
-                <!-- Star Pointers (Flame/Leaf shapes) -->
-                <path d="M 400 50 L 408 90 L 392 90 Z" fill="#fbbf24" />
-                <path d="M 400 750 L 408 710 L 392 710 Z" fill="#fbbf24" />
-                <path d="M 50 400 L 90 392 L 90 408 Z" fill="#fbbf24" />
-                <path d="M 750 400 L 710 392 L 710 408 Z" fill="#fbbf24" />
-                
-                <!-- Secondary pointers -->
                 <polygon points="150,250 165,260 155,270" fill="#f59e0b" />
                 <polygon points="650,250 635,260 645,270" fill="#f59e0b" />
-                <polygon points="150,550 165,540 155,530" fill="#f59e0b" />
-                <polygon points="650,550 635,540 645,530" fill="#f59e0b" />
             </g>
 
-            <!-- Alidade (Rotating Ruler) -->
             <g class="animate-[spin_90s_linear_infinite_reverse]" transform-origin="400 400">
-                <!-- Main Crosshair / Ruler -->
                 <line x1="30" y1="400" x2="770" y2="400" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
                 <line x1="400" y1="30" x2="400" y2="770" stroke="#b45309" stroke-width="1" stroke-dasharray="10 10" opacity="0.5" />
-                
-                <!-- Decorative ruler ends -->
-                <polygon points="20,400 50,392 50,408" fill="#fbbf24" />
-                <polygon points="780,400 750,392 750,408" fill="#fbbf24" />
-                
-                <!-- Center Pin & Rings -->
                 <circle cx="400" cy="400" r="30" fill="#080503" stroke="#f59e0b" stroke-width="2" />
                 <circle cx="400" cy="400" r="10" fill="#fbbf24" />
-                <circle cx="400" cy="400" r="45" fill="none" stroke="#d97706" stroke-width="1" stroke-dasharray="4 4" />
                 <circle cx="400" cy="400" r="60" fill="none" stroke="#92400e" stroke-width="1" />
             </g>
         </svg>
@@ -250,7 +199,7 @@
     <div class="warm-ambient" id="ambient-glow"></div>
     <div class="noise-overlay"></div>
 
-    <!-- TOP HEADER (Persistent) -->
+    <!-- Header -->
     <header class="absolute top-10 left-12 right-12 z-40 flex justify-between items-start">
         <div class="flex items-center gap-6">
             <div class="flex items-center gap-4 opacity-80 hover:opacity-100 transition-opacity duration-700">
@@ -261,7 +210,6 @@
         </div>
         
         <div class="flex items-center gap-8">
-            <!-- AUDIO TOGGLE BUTTON -->
             <button id="audio-toggle" class="text-amber-500 font-light text-[10px] uppercase tracking-[0.2em] transition-all duration-700 flex items-center gap-3 group">
                 <div class="flex items-end gap-[2px] h-4">
                     <div id="bar-1" class="w-[2px] h-1 bg-amber-400 animate-electric-1 transition-all duration-300"></div>
@@ -276,19 +224,20 @@
         </div>
     </header>
 
-    <!-- LEFT PROGRESS INDICATOR -->
+    <!-- Progress Indicator -->
     <div class="absolute left-12 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-4 opacity-60">
         <span id="current-page-num" class="text-amber-500 font-display text-lg italic">01</span>
-        <div class="w-[1px] h-16 bg-stone-800 relative">
-            <div id="progress-bar" class="absolute top-0 left-0 w-full bg-amber-600 transition-all duration-1000" style="height: 25%;"></div>
+        <div class="w-[1px] h-20 bg-stone-800 relative">
+            <div id="progress-bar" class="absolute top-0 left-0 w-full bg-amber-600 transition-all duration-1000" style="height: 14.28%;"></div>
         </div>
-        <span class="text-stone-600 font-sans text-xs">04</span>
+        <!-- Updated to 07 -->
+        <span class="text-stone-600 font-sans text-xs">07</span> 
     </div>
 
     <!-- MAIN SLIDES CONTAINER -->
     <main class="slide-container" id="slides-wrapper">
         
-        <!-- SLIDE 01: The Orphan / The Origin -->
+        <!-- SLIDE 01 -->
         <section class="slide active pl-32 pr-12">
             <div class="max-w-4xl">
                 <p class="text-[10px] text-amber-700/80 uppercase tracking-[0.3em] mb-6">Chapter I : The Origin</p>
@@ -302,7 +251,7 @@
             </div>
         </section>
 
-        <!-- SLIDE 02: 360 Gods / The Legacy Systems -->
+        <!-- SLIDE 02 -->
         <section class="slide pl-32 pr-12">
             <div class="max-w-4xl">
                 <p class="text-[10px] text-amber-700/80 uppercase tracking-[0.3em] mb-6">Chapter II : The 360 Idols</p>
@@ -316,7 +265,7 @@
             </div>
         </section>
 
-        <!-- SLIDE 03: The Return / Cleansing -->
+        <!-- SLIDE 03 -->
         <section class="slide pl-32 pr-12">
             <div class="max-w-5xl">
                 <p class="text-[10px] text-amber-700/80 uppercase tracking-[0.3em] mb-6">Chapter III : The Cleansing</p>
@@ -330,7 +279,7 @@
             </div>
         </section>
 
-        <!-- SLIDE 04: Tanzih / Pure Distinction (The Verse) -->
+        <!-- SLIDE 04 -->
         <section class="slide pl-32 pr-12 flex justify-between items-center w-full">
             <div class="max-w-2xl">
                 <p class="text-[10px] text-amber-700/80 uppercase tracking-[0.3em] mb-6">Chapter IV : The One Truth</p>
@@ -342,48 +291,97 @@
                     Philosophy <span class="text-amber-700/70">The Scholar of Systems</span>
                 </p>
             </div>
-
-            <!-- The Ayat on the Right -->
-            <aside class="flex flex-col items-end text-right max-w-[300px] opacity-90 cursor-default group mr-12">
-                <p class="text-[10px] text-stone-500 uppercase tracking-[0.2em] mb-4 group-hover:text-amber-600/70 transition-colors duration-700">
+            
+            <aside class="flex flex-col items-center max-w-[350px] opacity-90 cursor-default group mr-12">
+                <p class="text-[11.5px] text-stone-500 tracking-[0.1em] mb-2 group-hover:text-amber-600/70 transition-colors duration-700 text-center">
                     • QS. Ash-Shura (42):11
                 </p>
-                
-                <!-- Teks Arab yang akan dianimasikan oleh JavaScript -->
-                <h2 class="text-4xl text-amber-600 font-display mb-3 group-hover:text-amber-400 transition-colors duration-700 drop-shadow-[0_0_15px_rgba(217,119,6,0.3)] flex justify-end" dir="rtl">
-                    <span class="arabic-word" id="word-1">لَيْسَ </span>
-                    <span class="arabic-word" id="word-2">كَـمِثْـلِهِ </span>
-                    <span class="arabic-word" id="word-3">شَـيْءٌ</span>
+                <h2 class="text-4xl md:text-5xl text-amber-600 font-display mb-1 group-hover:text-amber-400 transition-colors duration-700 drop-shadow-[0_0_15px_rgba(217,119,6,0.3)] text-center leading-loose" dir="rtl">
+                    <span id="arabic-verse" class="arabic-ink inline-block pt-6 pb-2 px-2">
+                        لَيْسَ كَمِثْلِهِ شَيْءٌ
+                    </span>
                 </h2>
-
-                <p class="text-[14px] text-stone-300 font-light italic mb-6">
-                    "Laysa kamithlihi shay'un"
-                </p>
-                <div class="flex flex-col items-end gap-1.5 text-[11.5px] text-stone-400 font-light">
+                <p class="text-[14px] text-stone-300 font-light italic mb-5 text-center">"Laysa kamithlihi shay'un"</p>
+                
+                <div class="flex flex-col items-start gap-1 text-[12.5px] text-stone-400 font-light">
                     <p>• Beyond Human Reason</p>
-                    <p class="text-[10px] pr-4 text-stone-500">◦ Unimaginable & Indescribable</p>
-                    <p class="mt-2 text-[12px] text-amber-600/80 font-medium tracking-wide">
-                        • Tanzih (Pure Divine Distinction)
-                    </p>
+                    <div class="pl-4 flex flex-col gap-1 text-[11.5px] text-stone-500">
+                        <p>• Unimaginable</p>
+                        <p>• Indescribable</p>
+                    </div>
+                    <p class="mt-1 text-[12.5px] text-amber-600/80 font-medium tracking-wide">• Tanzih (Pure Divine Distinction)</p>
                 </div>
             </aside>
         </section>
 
+        <!-- SLIDE 05 -->
+        <section class="slide pl-32 pr-12 flex justify-between items-center w-full">
+            <div class="max-w-xl">
+                <p class="text-[10px] text-amber-700/80 uppercase tracking-[0.3em] mb-6">Chapter V : The Golden Legacy</p>
+                <h1 class="font-display font-normal text-4xl md:text-5xl lg:text-[4rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md mb-8">
+                    Science and faith, undivided. <br>
+                    To engineer is to <span class="text-amber-500/80 italic">understand the cosmos.</span>
+                </h1>
+                <p class="text-stone-500 font-light text-sm leading-relaxed mb-6">
+                    The drive to observe the universe birthed the Islamic Golden Age. Building beneficial technology is not merely a profession; it is an act of stewardship (Khalifah) and devotion. We engineer modern systems upon ancient foundations:
+                </p>
+            </div>
+            <div class="max-w-[450px] flex flex-col gap-5 mr-12 opacity-95">
+                <div class="border-l border-amber-900/40 pl-5 hover:border-amber-500/80 transition-colors duration-500 group">
+                    <h3 class="text-amber-600/90 font-display text-xl mb-1 group-hover:text-amber-400 transition-colors">Mathematics & Computing</h3>
+                    <p class="text-[11px] text-stone-400 font-light leading-relaxed">Al-Khawarizmi’s algorithms and the zero (0) numeral system laid the absolute foundations for modern programming.</p>
+                </div>
+                <div class="border-l border-amber-900/40 pl-5 hover:border-amber-500/80 transition-colors duration-500 group">
+                    <h3 class="text-amber-600/90 font-display text-xl mb-1 group-hover:text-amber-400 transition-colors">Mechanics & Automata</h3>
+                    <p class="text-[11px] text-stone-400 font-light leading-relaxed">Al-Jazari’s hydraulic gears and early programmable robots engineered centuries before the industrial revolution.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 06 (NEW): The Critique -->
+        <section class="slide pl-32 pr-12">
+            <div class="max-w-4xl">
+                <p class="text-[10px] text-amber-700/80 uppercase tracking-[0.3em] mb-6">Chapter VI : The Illusion of Nostalgia</p>
+                <h1 class="font-display font-normal text-5xl md:text-[4.5rem] lg:text-[5rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
+                    To admire history without action <br> 
+                    is to <span class="text-amber-500/80 italic">romanticize decay</span>.
+                </h1>
+                <p class="mt-8 text-stone-400 font-light text-base max-w-2xl leading-relaxed border-l-2 border-stone-800 pl-6">
+                    "Are we merely guarding the ashes of the Golden Age, or are we tending to its flame?"
+                </p>
+                <p class="mt-6 text-stone-500 font-light text-sm max-w-xl leading-relaxed">
+                    History is not a museum; it is a blueprint. We are commanded to be critical thinkers (Ulul Albab). What is the purpose of inheriting the mathematics of Al-Khawarizmi if we do not author the next algorithms? Nostalgia without innovation is a betrayal of the intellect we were granted.
+                </p>
+            </div>
+        </section>
+
+        <!-- SLIDE 07 (NEW): The Call to Action -->
+        <section class="slide pl-32 pr-12 flex justify-between items-center w-full">
+            <div class="max-w-3xl">
+                <p class="text-[10px] text-amber-700/80 uppercase tracking-[0.3em] mb-6">Chapter VII : The Next Renaissance</p>
+                <h1 class="font-display font-normal text-5xl md:text-[5rem] lg:text-[5.5rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
+                    Do not just read the legacy.<br> 
+                    <span class="text-amber-500/80 italic">Compile it. Execute it.</span>
+                </h1>
+                <p class="mt-8 text-stone-500 font-light text-sm max-w-xl leading-relaxed">
+                    The next Bayt al-Hikmah will not be built of stone, but of scalable architectures, pure logic, and ethical systems. The tools have changed, but the mandate remains: Seek knowledge, build with purpose, and elevate humanity. 
+                </p>
+            </div>
+        </section>
+
     </main>
 
-    <!-- BOTTOM SCROLL INDICATOR -->
+    <!-- Scroll Indicator -->
     <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-3 opacity-70">
-        <!-- Mouse Icon Base -->
         <div class="w-6 h-9 border border-amber-700/50 rounded-full flex justify-center p-1 relative backdrop-blur-sm bg-black/20">
-            <!-- Scrolling wheel animation -->
             <div class="w-1 h-2 bg-amber-500 rounded-full animate-bounce-subtle shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
         </div>
-        <span class="text-[10px] font-sans font-light text-stone-400 tracking-[0.1em] bg-stone-900/60 px-3 py-1 rounded-full border border-stone-800">
-            Scroll mouse ke halaman berikutnya
+        <span class="text-[10px] font-sans font-light text-stone-400 tracking-[0.1em] bg-stone-900/60 px-3 py-1 rounded-full border border-stone-800 uppercase">
+            Scroll to next chapter
         </span>
     </div>
 
-    <!-- MAIN JAVASCRIPT LOGIC -->
+    <!-- Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const slides = document.querySelectorAll('.slide');
@@ -391,7 +389,6 @@
             const progressBar = document.getElementById('progress-bar');
             const ambientGlow = document.getElementById('ambient-glow');
             
-            // Audio elements
             const splashScreen = document.getElementById('splash-screen');
             const audio = document.getElementById('bg-music');
             const audioToggle = document.getElementById('audio-toggle');
@@ -400,24 +397,25 @@
             const bar2 = document.getElementById('bar-2');
             const bar3 = document.getElementById('bar-3');
             
-            // Arabic Word elements
-            const word1 = document.getElementById('word-1');
-            const word2 = document.getElementById('word-2');
-            const word3 = document.getElementById('word-3');
+            const arabicVerse = document.getElementById('arabic-verse');
 
             let currentSlideIndex = 0;
             let isAnimating = false;
-            let arabicAnimationTimeouts = [];
+            let isPlaying = false;
+            let arabicAnimationTimeout;
             
-            // Background glow intensities per slide (Disesuaikan agar seimbang dengan latar bermotif kayu)
+            // Updated to 7 glow states for 7 chapters
             const glowStates = [
                 'radial-gradient(circle, rgba(217, 119, 6, 0.18) 0%, rgba(146, 64, 14, 0.06) 40%, rgba(69, 26, 3, 0.02) 65%, transparent 100%)',
                 'radial-gradient(circle, rgba(217, 119, 6, 0.22) 0%, rgba(146, 64, 14, 0.08) 45%, rgba(69, 26, 3, 0.03) 70%, transparent 100%)',
                 'radial-gradient(circle, rgba(245, 158, 11, 0.28) 0%, rgba(180, 83, 9, 0.1) 50%, rgba(69, 26, 3, 0.04) 75%, transparent 100%)',
-                'radial-gradient(circle, rgba(217, 119, 6, 0.20) 0%, rgba(146, 64, 14, 0.05) 40%, rgba(69, 26, 3, 0.02) 65%, transparent 100%)'
+                'radial-gradient(circle, rgba(217, 119, 6, 0.20) 0%, rgba(146, 64, 14, 0.05) 40%, rgba(69, 26, 3, 0.02) 65%, transparent 100%)',
+                'radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(180, 83, 9, 0.09) 45%, rgba(69, 26, 3, 0.03) 70%, transparent 100%)',
+                'radial-gradient(circle, rgba(200, 50, 11, 0.18) 0%, rgba(140, 30, 9, 0.08) 45%, rgba(69, 26, 3, 0.03) 70%, transparent 100%)', // Chapter 6: Slightly red/urgent hue
+                'radial-gradient(circle, rgba(251, 191, 36, 0.35) 0%, rgba(217, 119, 6, 0.15) 50%, rgba(146, 64, 14, 0.05) 80%, transparent 100%)' // Chapter 7: Bright golden revival
             ];
 
-            // 1. SPLASH SCREEN & AUTOPLAY LOGIC
+            // Auto Play Splash
             splashScreen.addEventListener('click', () => {
                 splashScreen.style.opacity = '0';
                 setTimeout(() => splashScreen.style.visibility = 'hidden', 1000);
@@ -432,7 +430,7 @@
                 });
             });
 
-            // 2. AUDIO TOGGLE BUTTON LOGIC
+            // Audio Controls
             function toggleAudioVisuals(active) {
                 if(active) {
                     audioText.innerText = '[ Sound : On ]';
@@ -461,66 +459,51 @@
                 }
             });
 
-            // 3. ARABIC TEXT ANIMATION LOGIC
             function triggerArabicAnimation() {
-                // Clear any running timeouts first
-                arabicAnimationTimeouts.forEach(clearTimeout);
-                
-                // Reset to hidden state
-                word1.classList.remove('reveal');
-                word2.classList.remove('reveal');
-                word3.classList.remove('reveal');
-
-                // Delay the start until the slide transition is almost done
-                let t1 = setTimeout(() => word1.classList.add('reveal'), 800);
-                let t2 = setTimeout(() => word2.classList.add('reveal'), 1600);
-                let t3 = setTimeout(() => word3.classList.add('reveal'), 2400);
-
-                arabicAnimationTimeouts = [t1, t2, t3];
+                clearTimeout(arabicAnimationTimeout);
+                arabicVerse.classList.remove('reveal');
+                arabicAnimationTimeout = setTimeout(() => {
+                    arabicVerse.classList.add('reveal');
+                }, 800);
             }
 
-            // 4. SLIDE NAVIGATION LOGIC
+            // Scroll Logic
             function updateSlide(newIndex, direction) {
                 if (isAnimating || newIndex < 0 || newIndex >= slides.length) return;
                 
                 isAnimating = true;
 
-                // Exit Current Slide
                 const currentSlide = slides[currentSlideIndex];
                 currentSlide.classList.remove('active');
                 currentSlide.classList.add(direction === 'down' ? 'exit-up' : 'exit-down');
 
-                // Enter Next Slide
                 const nextSlide = slides[newIndex];
                 nextSlide.classList.remove('exit-up', 'exit-down');
-                void nextSlide.offsetWidth; // Force reflow
+                void nextSlide.offsetWidth; 
                 nextSlide.classList.add('active');
                 
-                // Update UI Indicators
                 currentSlideIndex = newIndex;
                 pageNum.innerText = `0${currentSlideIndex + 1}`;
+                // Update to calculate percentage out of 7 slides
                 progressBar.style.height = `${((currentSlideIndex + 1) / slides.length) * 100}%`;
                 ambientGlow.style.background = glowStates[currentSlideIndex];
 
-                // Check if we arrived at Slide 4 (Index 3) to trigger Arabic animation
+                // Trigger animation on Chapter IV (Index 3)
                 if(currentSlideIndex === 3) {
                     triggerArabicAnimation();
                 }
 
-                // Cooldown mechanism
                 setTimeout(() => {
                     isAnimating = false;
                     currentSlide.classList.remove('exit-up', 'exit-down');
                 }, 1200);
             }
 
-            // Scroll Events
             window.addEventListener('wheel', (e) => {
                 if (e.deltaY > 20) updateSlide(currentSlideIndex + 1, 'down');
                 else if (e.deltaY < -20) updateSlide(currentSlideIndex - 1, 'up');
             });
 
-            // Touch Swipe Events for Mobile
             let touchStartY = 0;
             window.addEventListener('touchstart', e => touchStartY = e.changedTouches[0].screenY);
             window.addEventListener('touchend', e => {
