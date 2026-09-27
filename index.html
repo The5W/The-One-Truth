@@ -205,29 +205,29 @@
     <div class="noise-overlay"></div>
 
     <!-- Header -->
-    <header class="absolute top-10 left-12 right-12 z-40 flex justify-between items-start">
+    <header class="absolute top-6 left-6 right-6 md:top-10 md:left-12 md:right-12 z-40 flex justify-between items-start md:items-center">
         <div class="flex items-center gap-6">
-            <div class="flex items-center gap-4 opacity-80 hover:opacity-100 transition-opacity duration-700">
-                <span class="font-sans font-medium text-lg tracking-widest text-stone-200">THE5W</span>
-                <span class="text-stone-700 font-light text-[15px]">/</span>
-                <span class="text-amber-600/80 font-display text-xl tracking-wider" dir="rtl">بيت الحكمة</span>
+            <div class="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 opacity-80 hover:opacity-100 transition-opacity duration-700">
+                <span class="font-sans font-medium text-sm md:text-lg tracking-widest text-stone-200">THE5W</span>
+                <span class="hidden md:inline text-stone-700 font-light text-[15px]">/</span>
+                <span class="text-amber-600/80 font-display text-lg md:text-xl tracking-wider" dir="rtl">بيت الحكمة</span>
             </div>
         </div>
         
-        <div class="flex items-center gap-8">
-            <button id="audio-toggle" class="text-amber-500 font-light text-[10px] uppercase tracking-[0.2em] transition-all duration-700 flex items-center gap-3 group">
-                <div class="flex items-end gap-[2px] h-4">
+        <div class="flex items-center gap-8 mt-1 md:mt-0">
+            <button id="audio-toggle" class="text-amber-500 font-light text-[9px] md:text-[10px] uppercase tracking-[0.2em] transition-all duration-700 flex items-center gap-2 md:gap-3 group">
+                <div class="flex items-end gap-[2px] h-3 md:h-4">
                     <div id="bar-1" class="w-[2px] h-1 bg-amber-400 animate-electric-1 transition-all duration-300"></div>
                     <div id="bar-2" class="w-[2px] h-2 bg-amber-400 animate-electric-2 transition-all duration-300"></div>
                     <div id="bar-3" class="w-[2px] h-3 bg-amber-400 animate-electric-3 transition-all duration-300"></div>
                 </div>
-                <span id="audio-text">[ Sound : On ]</span>
+                <span id="audio-text" class="whitespace-nowrap">[ Sound : On ]</span>
             </button>
         </div>
     </header>
 
     <!-- Progress Indicator -->
-    <div class="absolute left-12 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-4 opacity-60">
+    <div class="hidden md:flex absolute left-12 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-4 opacity-60">
         <span id="current-page-num" class="text-amber-500 font-display text-lg italic">01</span>
         <div class="w-[1px] h-20 bg-stone-800 relative">
             <div id="progress-bar" class="absolute top-0 left-0 w-full bg-amber-600 transition-all duration-1000" style="height: 14.28%;"></div>
@@ -239,188 +239,188 @@
     <main class="slide-container" id="slides-wrapper">
         
         <!-- SLIDE 01 : Warm Desert Amber -->
-        <section class="slide active pl-32 pr-12">
-            <div class="max-w-4xl">
-                <p class="text-[10px] text-amber-700/80 uppercase tracking-[0.3em] mb-6">Chapter I : The Origin</p>
-                <h1 class="font-display font-normal text-5xl md:text-[5rem] lg:text-[5.5rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
-                    Born into a world <br> 
+        <section class="slide active px-8 md:pl-32 md:pr-12">
+            <div class="max-w-4xl w-full mx-auto md:mx-0 pt-16 md:pt-0">
+                <p class="text-[9px] md:text-[10px] text-amber-700/80 uppercase tracking-[0.3em] mb-4 md:mb-6">Chapter I : The Origin</p>
+                <h1 class="font-display font-normal text-4xl sm:text-5xl md:text-[5rem] lg:text-[5.5rem] leading-[1.2] md:leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
+                    Born into a world <br class="hidden sm:block"> 
                     built upon <span class="text-amber-500/80 italic">fragmented chaos</span>.
                 </h1>
-                <p class="mt-8 text-stone-500 font-light text-sm max-w-lg leading-relaxed">
+                <p class="mt-6 md:mt-8 text-stone-500 font-light text-xs md:text-sm max-w-lg leading-relaxed">
                     Like the orphan of the desert, we inherit systems built on hundreds of disjointed, legacy foundations. True architecture begins by observing the noise.
                 </p>
             </div>
         </section>
 
         <!-- SLIDE 02 : Deep Bronze / Ochre -->
-        <section class="slide pl-32 pr-12">
-            <div class="max-w-4xl">
-                <p class="text-[10px] text-amber-600/80 uppercase tracking-[0.3em] mb-6">Chapter II : The 360 Idols</p>
-                <h1 class="font-display font-normal text-5xl md:text-[5rem] lg:text-[5.5rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
-                    Surrounded by <br> 
+        <section class="slide px-8 md:pl-32 md:pr-12">
+            <div class="max-w-4xl w-full mx-auto md:mx-0 pt-16 md:pt-0">
+                <p class="text-[9px] md:text-[10px] text-amber-600/80 uppercase tracking-[0.3em] mb-4 md:mb-6">Chapter II : The 360 Idols</p>
+                <h1 class="font-display font-normal text-4xl sm:text-5xl md:text-[5rem] lg:text-[5.5rem] leading-[1.2] md:leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
+                    Surrounded by <br class="hidden sm:block"> 
                     <span class="text-amber-400/90 italic">360 false idols</span> of architecture.
                 </h1>
-                <p class="mt-8 text-stone-500 font-light text-sm max-w-lg leading-relaxed">
+                <p class="mt-6 md:mt-8 text-stone-500 font-light text-xs md:text-sm max-w-lg leading-relaxed">
                     A society fractured by complexity. Over-engineered codebases and tangled dependencies acting as false gods. The sanctuary must be cleansed.
                 </p>
             </div>
         </section>
 
         <!-- SLIDE 03 : Mystical Emerald / Deep Forest Subtle -->
-        <section class="slide pl-32 pr-12">
-            <div class="max-w-5xl">
-                <p class="text-[10px] text-emerald-600/80 uppercase tracking-[0.3em] mb-6">Chapter III : The Cleansing</p>
-                <h1 class="font-display font-normal text-5xl md:text-[5rem] lg:text-[5.5rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
-                    Returning to dismantle <br> 
+        <section class="slide px-8 md:pl-32 md:pr-12">
+            <div class="max-w-5xl w-full mx-auto md:mx-0 pt-16 md:pt-0">
+                <p class="text-[9px] md:text-[10px] text-emerald-600/80 uppercase tracking-[0.3em] mb-4 md:mb-6">Chapter III : The Cleansing</p>
+                <h1 class="font-display font-normal text-4xl sm:text-5xl md:text-[5rem] lg:text-[5.5rem] leading-[1.2] md:leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
+                    Returning to dismantle <br class="hidden sm:block"> 
                     chaos, restoring <span class="text-emerald-400/90 italic">pure logic</span>.
                 </h1>
-                <p class="mt-8 text-stone-500 font-light text-sm max-w-lg leading-relaxed">
+                <p class="mt-6 md:mt-8 text-stone-500 font-light text-xs md:text-sm max-w-lg leading-relaxed">
                     Decades of bloated architecture destroyed. Replacing overwhelming complexity with the unified elegance of a single, universal truth.
                 </p>
             </div>
         </section>
 
         <!-- SLIDE 04 : Celestial Indigo / Midnight Blue -->
-        <section class="slide pl-32 pr-12 flex justify-between items-center w-full">
-            <div class="max-w-2xl">
-                <p class="text-[10px] text-indigo-400/80 uppercase tracking-[0.3em] mb-6">Chapter IV : The One Truth</p>
-                <h1 class="font-display font-normal text-5xl md:text-[4.5rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md mb-6">
-                    Translating chaotic data into <br>
+        <section class="slide px-8 md:pl-32 md:pr-12 flex flex-col md:flex-row justify-center md:justify-between items-center w-full gap-8 md:gap-0">
+            <div class="max-w-2xl w-full mx-auto md:mx-0 text-center md:text-left pt-16 md:pt-0">
+                <p class="text-[9px] md:text-[10px] text-indigo-400/80 uppercase tracking-[0.3em] mb-4 md:mb-6">Chapter IV : The One Truth</p>
+                <h1 class="font-display font-normal text-4xl sm:text-5xl md:text-[4.5rem] leading-[1.2] md:leading-[1.1] tracking-tight text-stone-200 drop-shadow-md mb-4 md:mb-6">
+                    Translating chaotic data into <br class="hidden md:block">
                     <span class="text-indigo-300 italic">elegant, universal truths.</span>
                 </h1>
-                <p class="text-[9px] text-stone-600 uppercase tracking-[0.2em] border-t border-stone-800/60 pt-4 mt-8 inline-block">
+                <p class="text-[8px] md:text-[9px] text-stone-600 uppercase tracking-[0.2em] border-t border-stone-800/60 pt-4 mt-4 md:mt-8 inline-block">
                     Philosophy <span class="text-indigo-400/70">The Scholar of Systems</span>
                 </p>
             </div>
             
-            <aside class="flex flex-col items-center max-w-[350px] opacity-90 cursor-default group mr-12">
-                <p class="text-[11.5px] text-stone-500 tracking-[0.1em] mb-2 group-hover:text-indigo-400 transition-colors duration-700 text-center">
+            <aside class="flex flex-col items-center max-w-[350px] w-full opacity-90 cursor-default group md:mr-12">
+                <p class="text-[10px] md:text-[11.5px] text-stone-500 tracking-[0.1em] mb-2 group-hover:text-indigo-400 transition-colors duration-700 text-center">
                     • QS. Ash-Shura (42):11
                 </p>
-                <h2 class="text-4xl md:text-5xl text-indigo-400 font-display mb-1 group-hover:text-indigo-300 transition-colors duration-700 drop-shadow-[0_0_15px_rgba(129,140,248,0.3)] text-center leading-loose" dir="rtl">
-                    <span id="arabic-verse" class="arabic-ink inline-block pt-6 pb-2 px-2">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl text-indigo-400 font-display mb-1 group-hover:text-indigo-300 transition-colors duration-700 drop-shadow-[0_0_15px_rgba(129,140,248,0.3)] text-center leading-loose" dir="rtl">
+                    <span id="arabic-verse" class="arabic-ink inline-block pt-4 md:pt-6 pb-2 px-2">
                         لَيْسَ كَمِثْلِهِ شَيْءٌ
                     </span>
                 </h2>
-                <p class="text-[14px] text-stone-300 font-light italic mb-5 text-center">"Laysa kamithlihi shay'un"</p>
+                <p class="text-[12px] md:text-[14px] text-stone-300 font-light italic mb-4 md:mb-5 text-center">"Laysa kamithlihi shay'un"</p>
                 
-                <div class="flex flex-col items-start gap-1 text-[12.5px] text-stone-400 font-light">
+                <div class="flex flex-col items-center md:items-start gap-1 text-[11px] md:text-[12.5px] text-stone-400 font-light text-center md:text-left">
                     <p>• Beyond Human Reason</p>
-                    <div class="pl-4 flex flex-col gap-1 text-[11.5px] text-stone-500">
+                    <div class="md:pl-4 flex flex-row md:flex-col justify-center gap-3 md:gap-1 text-[10px] md:text-[11.5px] text-stone-500">
                         <p>• Unimaginable</p>
                         <p>• Indescribable</p>
                     </div>
-                    <p class="mt-1 text-[12.5px] text-indigo-400/80 font-medium tracking-wide">• Tanzih (Pure Divine Distinction)</p>
+                    <p class="mt-1 text-[11px] md:text-[12.5px] text-indigo-400/80 font-medium tracking-wide">• Tanzih (Pure Divine Distinction)</p>
                 </div>
             </aside>
         </section>
 
         <!-- SLIDE 05 : Royal Gold & Teal -->
-        <section class="slide pl-32 pr-12 flex justify-between items-center w-full">
-            <div class="max-w-xl">
-                <p class="text-[10px] text-teal-600/80 uppercase tracking-[0.3em] mb-6">Chapter V : The Golden Legacy</p>
-                <h1 class="font-display font-normal text-4xl md:text-5xl lg:text-[4rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md mb-8">
-                    Science and faith, undivided. <br>
+        <section class="slide px-8 md:pl-32 md:pr-12 flex flex-col lg:flex-row justify-center lg:justify-between items-center w-full gap-8 lg:gap-0">
+            <div class="max-w-xl w-full mx-auto lg:mx-0 text-center lg:text-left pt-16 lg:pt-0">
+                <p class="text-[9px] md:text-[10px] text-teal-600/80 uppercase tracking-[0.3em] mb-4 md:mb-6">Chapter V : The Golden Legacy</p>
+                <h1 class="font-display font-normal text-3xl sm:text-4xl md:text-5xl lg:text-[4rem] leading-[1.2] md:leading-[1.1] tracking-tight text-stone-200 drop-shadow-md mb-6 md:mb-8">
+                    Science and faith, undivided. <br class="hidden md:block">
                     To engineer is to <span class="text-teal-400/90 italic">understand the cosmos.</span>
                 </h1>
-                <p class="text-stone-500 font-light text-sm leading-relaxed mb-6">
+                <p class="text-stone-500 font-light text-xs md:text-sm leading-relaxed mb-6">
                     The drive to observe the universe birthed the Islamic Golden Age. Building beneficial technology is not merely a profession; it is an act of stewardship (Khalifah) and devotion. We engineer modern systems upon ancient foundations:
                 </p>
             </div>
-            <div class="max-w-[450px] flex flex-col gap-5 mr-12 opacity-95">
-                <div class="border-l border-teal-900/40 pl-5 hover:border-teal-500/80 transition-colors duration-500 group">
-                    <h3 class="text-teal-500/90 font-display text-xl mb-1 group-hover:text-teal-300 transition-colors">Mathematics & Computing</h3>
-                    <p class="text-[11px] text-stone-400 font-light leading-relaxed">Al-Khawarizmi’s algorithms and the zero (0) numeral system laid the absolute foundations for modern programming.</p>
+            <div class="max-w-[450px] w-full flex flex-col gap-4 md:gap-5 lg:mr-12 opacity-95 text-left">
+                <div class="border-l-2 border-teal-900/40 pl-4 md:pl-5 hover:border-teal-500/80 transition-colors duration-500 group">
+                    <h3 class="text-teal-500/90 font-display text-lg md:text-xl mb-1 group-hover:text-teal-300 transition-colors">Mathematics & Computing</h3>
+                    <p class="text-[10px] md:text-[11px] text-stone-400 font-light leading-relaxed">Al-Khawarizmi’s algorithms and the zero (0) numeral system laid the absolute foundations for modern programming.</p>
                 </div>
-                <div class="border-l border-teal-900/40 pl-5 hover:border-teal-500/80 transition-colors duration-500 group">
-                    <h3 class="text-teal-500/90 font-display text-xl mb-1 group-hover:text-teal-300 transition-colors">Mechanics & Automata</h3>
-                    <p class="text-[11px] text-stone-400 font-light leading-relaxed">Al-Jazari’s hydraulic gears and early programmable robots engineered centuries before the industrial revolution.</p>
+                <div class="border-l-2 border-teal-900/40 pl-4 md:pl-5 hover:border-teal-500/80 transition-colors duration-500 group">
+                    <h3 class="text-teal-500/90 font-display text-lg md:text-xl mb-1 group-hover:text-teal-300 transition-colors">Mechanics & Automata</h3>
+                    <p class="text-[10px] md:text-[11px] text-stone-400 font-light leading-relaxed">Al-Jazari’s hydraulic gears and early programmable robots engineered centuries before the industrial revolution.</p>
                 </div>
             </div>
         </section>
 
         <!-- SLIDE 06 : Elegant Deep Maroon -->
-        <section class="slide pl-32 pr-12">
-            <div class="max-w-4xl">
-                <p class="text-[10px] text-rose-500/80 uppercase tracking-[0.3em] mb-6">Chapter VI : The Illusion of Nostalgia</p>
-                <h1 class="font-display font-normal text-5xl md:text-[4.5rem] lg:text-[5rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
-                    To admire history without action <br> 
+        <section class="slide px-8 md:pl-32 md:pr-12">
+            <div class="max-w-4xl w-full mx-auto md:mx-0 pt-16 md:pt-0">
+                <p class="text-[9px] md:text-[10px] text-rose-500/80 uppercase tracking-[0.3em] mb-4 md:mb-6">Chapter VI : The Illusion of Nostalgia</p>
+                <h1 class="font-display font-normal text-4xl sm:text-5xl md:text-[4.5rem] lg:text-[5rem] leading-[1.2] md:leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
+                    To admire history without action <br class="hidden md:block"> 
                     is to <span class="text-rose-400 italic">romanticize decay</span>.
                 </h1>
-                <p class="mt-8 text-stone-400 font-light text-base max-w-2xl leading-relaxed border-l-2 border-rose-900/60 pl-6">
+                <p class="mt-6 md:mt-8 text-stone-400 font-light text-sm md:text-base max-w-2xl leading-relaxed border-l-2 border-rose-900/60 pl-4 md:pl-6">
                     "Are we merely guarding the ashes of the Golden Age, or are we tending to its flame?"
                 </p>
-                <p class="mt-6 text-stone-500 font-light text-sm max-w-xl leading-relaxed">
+                <p class="mt-4 md:mt-6 text-stone-500 font-light text-xs md:text-sm max-w-xl leading-relaxed">
                     History is not a museum; it is a blueprint. We are commanded to be critical thinkers (Ulul Albab). What is the purpose of inheriting the mathematics of Al-Khawarizmi if we do not author the next algorithms? Nostalgia without innovation is a betrayal of the intellect we were granted.
                 </p>
             </div>
         </section>
 
         <!-- SLIDE 07 (CHAPTER VII) : Deep Void / Obsidian Cyan -->
-        <section class="slide pl-32 pr-12 flex justify-between items-center w-full gap-12 relative">
+        <section class="slide px-6 md:pl-32 md:pr-12 flex flex-col lg:flex-row justify-center lg:justify-between items-center w-full gap-8 lg:gap-12 relative">
             
             <!-- CHAPTER 7 PAGE LOCK OVERLAY WITH RIDDLE -->
-            <div id="page7-lock-overlay" class="absolute inset-0 bg-[#060402]/98 z-50 flex flex-col items-center justify-center backdrop-blur-md transition-all duration-700 shadow-[0_0_50px_rgba(0,0,0,0.9)] px-6">
-                <div class="max-w-md w-full bg-[#0d0a07] border border-amber-900/60 rounded-xl p-8 shadow-[0_0_30px_rgba(217,119,6,0.15)] text-center relative">
+            <div id="page7-lock-overlay" class="absolute inset-0 bg-[#060402]/98 z-50 flex flex-col items-center justify-center backdrop-blur-md transition-all duration-700 shadow-[0_0_50px_rgba(0,0,0,0.9)] px-4 md:px-6">
+                <div class="max-w-md w-full bg-[#0d0a07] border border-amber-900/60 rounded-xl p-6 md:p-8 shadow-[0_0_30px_rgba(217,119,6,0.15)] text-center relative">
                     
-                    <div class="w-16 h-16 rounded-full bg-amber-950/80 border border-amber-700/60 flex items-center justify-center mx-auto mb-5 shadow-[0_0_20px_rgba(217,119,6,0.3)]">
-                        <svg id="page7-lock-svg" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-amber-950/80 border border-amber-700/60 flex items-center justify-center mx-auto mb-4 md:mb-5 shadow-[0_0_20px_rgba(217,119,6,0.3)]">
+                        <svg id="page7-lock-svg" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-7 md:h-7 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
                     </div>
 
-                    <h2 class="text-amber-500 font-display text-2xl tracking-wider mb-2">Riddle of the Desert Orphan</h2>
-                    <p class="text-stone-400 font-sans text-xs mb-6 leading-relaxed">
+                    <h2 class="text-amber-500 font-display text-xl md:text-2xl tracking-wider mb-2">Riddle of the Desert Orphan</h2>
+                    <p class="text-stone-400 font-sans text-[11px] md:text-xs mb-5 md:mb-6 leading-relaxed">
                         "Born in fragmented chaos, tasked to cleanse 360 idols, and bring forth the ultimate light of truth. <span class="text-amber-400 font-medium">Who is the master architect of this legacy mentioned in Chapters I–IV?</span>"
                     </p>
 
                     <div class="flex flex-col gap-3">
-                        <input type="text" id="riddle-input" class="bg-black/60 border border-amber-900/50 rounded px-4 py-2.5 text-amber-400 font-mono text-sm text-center outline-none focus:border-amber-500 placeholder-amber-900/40" placeholder="Enter password / name..." autocomplete="off">
-                        <button id="riddle-submit-btn" class="bg-amber-800 hover:bg-amber-700 text-stone-100 font-sans text-xs uppercase tracking-[0.2em] py-2.5 rounded transition-colors shadow-md">
+                        <input type="text" id="riddle-input" class="bg-black/60 border border-amber-900/50 rounded px-3 py-2 md:px-4 md:py-2.5 text-amber-400 font-mono text-sm text-center outline-none focus:border-amber-500 placeholder-amber-900/40" placeholder="Enter password / name..." autocomplete="off">
+                        <button id="riddle-submit-btn" class="bg-amber-800 hover:bg-amber-700 text-stone-100 font-sans text-[10px] md:text-xs uppercase tracking-[0.2em] py-2.5 md:py-3 rounded transition-colors shadow-md">
                             Unlock Chapter VII
                         </button>
                     </div>
-                    <p id="riddle-error" class="text-red-400 text-xs mt-3 hidden">Incorrect answer. Review Chapters I - IV carefully.</p>
+                    <p id="riddle-error" class="text-red-400 text-[10px] md:text-xs mt-3 hidden">Incorrect answer. Review Chapters I - IV carefully.</p>
                 </div>
             </div>
 
-            <div class="max-w-xl">
-                <p class="text-[10px] text-cyan-500/80 uppercase tracking-[0.3em] mb-6">Chapter VII : The Next Renaissance</p>
-                <h1 class="font-display font-normal text-5xl md:text-[4.5rem] lg:text-[5rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
-                    Do not just read the legacy.<br> 
-                    <span class="text-cyan-400/90 italic">Compile it. Execute it.</span>
+            <div class="max-w-xl w-full mx-auto lg:mx-0 text-center lg:text-left pt-12 md:pt-16 lg:pt-0 shrink-0">
+                <p class="text-[9px] md:text-[10px] text-cyan-500/80 uppercase tracking-[0.3em] mb-4 md:mb-6">Chapter VII : The Next Renaissance</p>
+                <h1 class="font-display font-normal text-3xl sm:text-4xl md:text-[4.5rem] lg:text-[5rem] leading-[1.2] md:leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
+                    Do not just read the legacy.<br class="hidden lg:block"> 
+                    <span class="text-cyan-400/90 italic block mt-1 lg:mt-0 lg:inline">Compile it. Execute it.</span>
                 </h1>
-                <p class="mt-8 text-stone-500 font-light text-sm max-w-xl leading-relaxed">
+                <p class="mt-4 md:mt-8 text-stone-500 font-light text-xs md:text-sm max-w-xl leading-relaxed mx-auto lg:mx-0">
                     The next Bayt al-Hikmah will not be built of stone, but of scalable architectures, pure logic, and ethical systems. The tools have changed, but the mandate remains: Seek knowledge, build with purpose, and elevate humanity. 
                 </p>
             </div>
 
             <!-- Terminal / CMD Interface with Secondary Lock (Centered Right & Resizable) -->
-            <div id="draggable-terminal-wrapper" class="relative w-full max-w-[500px] h-[380px] z-30 cursor-default select-none mr-12 shrink-0">
+            <div id="draggable-terminal-wrapper" class="relative w-full max-w-full lg:max-w-[500px] h-[300px] md:h-[380px] z-30 cursor-default select-none lg:mr-12 shrink-0 mt-6 lg:mt-0">
                 
                 <!-- Terminal Inner Lock Overlay -->
                 <div id="terminal-lock-overlay" class="absolute inset-0 bg-[#030201]/90 border border-cyan-950/60 rounded-lg z-20 flex flex-col items-center justify-center backdrop-blur-md transition-all duration-700 cursor-pointer group shadow-[0_0_30px_rgba(0,0,0,0.9)]">
-                    <div id="lock-icon-container" class="w-16 h-16 rounded-full bg-cyan-950/60 border border-cyan-700/50 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:border-cyan-400 transition-all duration-500 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
-                        <svg id="lock-svg" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-cyan-400 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <div id="lock-icon-container" class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-cyan-950/60 border border-cyan-700/50 flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 group-hover:border-cyan-400 transition-all duration-500 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                        <svg id="lock-svg" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 text-cyan-400 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
                     </div>
-                    <p class="text-cyan-400 font-mono text-xs tracking-[0.2em] uppercase mb-1">Terminal Secure Lock</p>
-                    <p class="text-stone-500 font-sans text-[11px] tracking-wider">[ Click to unlock session ]</p>
+                    <p class="text-cyan-400 font-mono text-[10px] md:text-xs tracking-[0.2em] uppercase mb-1">Terminal Secure Lock</p>
+                    <p class="text-stone-500 font-sans text-[9px] md:text-[11px] tracking-wider">[ Click to unlock session ]</p>
                 </div>
 
                 <!-- Terminal Container -->
-                <div id="terminal-container" class="w-full h-full bg-[#030201] border border-cyan-950/60 rounded-lg shadow-[0_0_20px_rgba(0,0,0,0.8)] backdrop-blur-md flex flex-col font-mono text-xs md:text-sm text-cyan-400/90 overflow-hidden relative opacity-90 hover:opacity-100 transition-opacity duration-500">
+                <div id="terminal-container" class="w-full h-full bg-[#030201] border border-cyan-950/60 rounded-lg shadow-[0_0_20px_rgba(0,0,0,0.8)] backdrop-blur-md flex flex-col font-mono text-[10px] md:text-xs lg:text-sm text-cyan-400/90 overflow-hidden relative opacity-90 hover:opacity-100 transition-opacity duration-500">
                     
                     <!-- Terminal Header (Draggable Handle + Controls) -->
-                    <div id="terminal-header" class="w-full bg-cyan-950/20 border-b border-cyan-900/40 p-2.5 flex items-center justify-between cursor-grab active:cursor-grabbing">
-                        <span class="text-cyan-600/80 text-[10px] tracking-widest uppercase pointer-events-none">Al-Iksr OS (Draggable)</span>
+                    <div id="terminal-header" class="w-full bg-cyan-950/20 border-b border-cyan-900/40 p-2 flex items-center justify-between cursor-grab active:cursor-grabbing touch-none">
+                        <span class="text-cyan-600/80 text-[9px] md:text-[10px] tracking-widest uppercase pointer-events-none">Al-Iksr OS</span>
                         <div class="flex items-center gap-2">
-                            <button id="terminal-back-btn" class="text-[10px] text-cyan-400 bg-cyan-950/60 border border-cyan-800/40 px-2 py-0.5 rounded hover:bg-cyan-900/50 transition-colors uppercase tracking-wider cursor-pointer">
+                            <button id="terminal-back-btn" class="text-[9px] md:text-[10px] text-cyan-400 bg-cyan-950/60 border border-cyan-800/40 px-1.5 py-0.5 rounded hover:bg-cyan-900/50 transition-colors uppercase tracking-wider cursor-pointer">
                                 [ Back ]
                             </button>
                             <!-- Maximize / Minimize / Expand Controls -->
-                            <div class="flex items-center gap-1.5 ml-1">
+                            <div class="hidden md:flex items-center gap-1.5 ml-1">
                                 <button id="terminal-size-btn" class="w-4 h-4 rounded-full bg-cyan-900/40 border border-cyan-700/50 flex items-center justify-center text-[9px] text-cyan-300 hover:bg-cyan-700 hover:text-white transition-colors cursor-pointer" title="Maximize / Restore">
                                     +
                                 </button>
@@ -430,18 +430,18 @@
                     </div>
 
                     <!-- Terminal Body (Output) -->
-                    <div id="terminal-output" class="flex-1 p-4 overflow-y-auto space-y-1.5 custom-scrollbar">
-                        <div class="text-stone-500 mb-4">
+                    <div id="terminal-output" class="flex-1 p-3 md:p-4 overflow-y-auto space-y-1.5 custom-scrollbar pb-10">
+                        <div class="text-stone-500 mb-4 leading-relaxed">
                             System Initialized. Kernel v1.0.0<br>
                             Authentication successful. Welcome, Scholar.<br>
-                            Type <span class="text-cyan-300">help</span> to begin sequence or click <span class="text-cyan-300">[ Back ]</span> anytime.
+                            Type <span class="text-cyan-300">help</span> to begin sequence or tap <span class="text-cyan-300">[ Back ]</span> anytime.
                         </div>
                     </div>
 
                     <!-- Terminal Input -->
-                    <div class="p-4 pt-1 pb-4 flex items-center gap-2">
-                        <span class="text-cyan-600">root@bayt-al-hikmah:~$</span>
-                        <input type="text" id="terminal-input" class="bg-transparent border-none outline-none flex-1 text-cyan-300 font-mono focus:ring-0 placeholder-cyan-900/30" placeholder="Enter command or type 'back'..." autocomplete="off" spellcheck="false">
+                    <div class="absolute bottom-0 left-0 w-full p-2 md:p-4 pt-1 pb-2 md:pb-4 flex items-center gap-2 bg-[#030201]">
+                        <span class="text-cyan-600">root@bayt:~$</span>
+                        <input type="text" id="terminal-input" class="bg-transparent border-none outline-none flex-1 text-cyan-300 font-mono text-[10px] md:text-sm focus:ring-0 placeholder-cyan-900/40" placeholder="Enter command..." autocomplete="off" spellcheck="false">
                     </div>
                 </div>
 
@@ -451,12 +451,12 @@
     </main>
 
     <!-- Scroll Indicator -->
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-3 opacity-70">
-        <div class="w-6 h-9 border border-amber-700/50 rounded-full flex justify-center p-1 relative backdrop-blur-sm bg-black/20">
-            <div class="w-1 h-2 bg-amber-500 rounded-full animate-bounce-subtle shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
+    <div class="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 md:gap-3 opacity-70 pointer-events-none">
+        <div class="w-5 h-7 md:w-6 md:h-9 border border-amber-700/50 rounded-full flex justify-center p-1 relative backdrop-blur-sm bg-black/20">
+            <div class="w-1 h-1.5 md:h-2 bg-amber-500 rounded-full animate-bounce-subtle shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
         </div>
-        <span class="text-[10px] font-sans font-light text-stone-400 tracking-[0.1em] bg-stone-900/60 px-3 py-1 rounded-full border border-stone-800 uppercase">
-            Scroll to next chapter
+        <span class="text-[8px] md:text-[10px] font-sans font-light text-stone-400 tracking-[0.1em] bg-stone-900/60 px-2 py-1 md:px-3 rounded-full border border-stone-800 uppercase text-center whitespace-nowrap">
+            Scroll to next
         </span>
     </div>
 
