@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The5W — AL Iksr</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Amiri', 'serif'],
+                    },
+                    colors: {
+                        night: '#050505'
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-subtle': 'bounceSubtle 2s infinite',
+                        'electric-1': 'electric1 0.4s infinite',
+                        'electric-2': 'electric2 0.35s infinite',
+                        'electric-3': 'electric3 0.45s infinite',
+                    },
+                    keyframes: {
+                        bounceSubtle: {
+                            '0%, 100%': { transform: 'translateY(-10%)', opacity: '0.5' },
+                            '50%': { transform: 'translateY(10%)', opacity: '1' },
+                        },
+                        electric1: {
+                            '0%, 100%': { height: '4px', opacity: '0.6', boxShadow: '0 0 2px #d97706' },
+                            '25%': { height: '16px', opacity: '1', boxShadow: '0 0 10px #fbbf24, 0 0 2px #fff', backgroundColor: '#fbbf24' },
+                            '50%': { height: '2px', opacity: '0.3', boxShadow: 'none' },
+                            '75%': { height: '12px', opacity: '0.9', boxShadow: '0 0 8px #f59e0b' },
+                        },
+                        electric2: {
+                            '0%, 100%': { height: '8px', opacity: '0.8', boxShadow: '0 0 4px #d97706' },
+                            '20%': { height: '3px', opacity: '0.4', boxShadow: 'none' },
+                            '60%': { height: '20px', opacity: '1', boxShadow: '0 0 12px #fbbf24, 0 0 4px #fff', backgroundColor: '#fbbf24' },
+                            '80%': { height: '10px', opacity: '0.7', boxShadow: '0 0 5px #f59e0b' },
+                        },
+                        electric3: {
+                            '0%, 100%': { height: '12px', opacity: '0.6', boxShadow: '0 0 3px #d97706' },
+                            '30%': { height: '22px', opacity: '1', boxShadow: '0 0 12px #fbbf24, 0 0 3px #fff', backgroundColor: '#fbbf24' },
+                            '60%': { height: '4px', opacity: '0.4', boxShadow: 'none' },
+                            '85%': { height: '14px', opacity: '0.9', boxShadow: '0 0 8px #f59e0b' },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #080503;
+            overflow: hidden;
+        }
+
+        /* Astrolabe Background */
+        .astrolabe-bg {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 130vmin; height: 130vmin;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.18;
+            mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 65%);
+            -webkit-mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 65%);
+        }
+
+        /* Ambient Glow with Smooth Transition */
+        .warm-ambient {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120vw; height: 120vh;
+            pointer-events: none;
+            z-index: 2;
+            transition: background 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Noise Overlay */
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Slides */
+        .slide-container {
+            position: relative;
+            width: 100vw; height: 100vh;
+            z-index: 10;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(40px);
+            transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .slide.active { opacity: 1; visibility: visible; transform: translateY(0); }
+        .slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-40px); }
+        .slide.exit-down { opacity: 0; visibility: hidden; transform: translateY(40px); }
+
+        /* Arabic Ink Reveal */
+        .arabic-ink {
+            clip-path: inset(0 0 0 100%);
+            -webkit-clip-path: inset(0 0 0 100%);
+            transition: clip-path 3.5s cubic-bezier(0.4, 0, 0.2, 1), -webkit-clip-path 3.5s cubic-bezier(0.4, 0, 0.2, 1), filter 3.5s ease-out;
+            filter: blur(2px) brightness(1.5);
+        }
+
+        .arabic-ink.reveal {
+            clip-path: inset(0 0 0 0%);
+            -webkit-clip-path: inset(0 0 0 0%);
+            filter: blur(0px) brightness(1);
+        }
+
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: #050505;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: opacity 1s ease-out, visibility 1s ease-out;
+        }
+
+        /* Terminal Window States */
+        #draggable-terminal-wrapper {
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+    </style>
+</head>
+<body class="text-stone-400 font-sans antialiased selection:bg-amber-900/40 selection:text-amber-100">
+
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <h1 class="font-display text-3xl md:text-5xl text-amber-600/80 mb-6 drop-shadow-[0_0_15px_rgba(217,119,6,0.3)]">بيت الحكمة</h1>
+        <p class="text-stone-500 font-light tracking-[0.3em] uppercase text-xs md:text-sm animate-pulse-slow">Tap to Enter the Sanctuary</p>
+    </div>
+
+    <!-- Audio -->
+    <audio id="bg-music" loop crossorigin="anonymous">
+        <source src="https://raw.githubusercontent.com/The5W/The-One-Truth/main/Desert%20Journey.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Astrolabe SVG -->
+    <div class="astrolabe-bg">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" class="w-full h-full">
+            <circle cx="400" cy="400" r="395" fill="none" stroke="#78350f" stroke-width="1" />
+            <circle cx="400" cy="400" r="380" fill="none" stroke="#b45309" stroke-width="4" />
+            <circle cx="400" cy="400" r="370" fill="none" stroke="#d97706" stroke-width="1" stroke-dasharray="4 6" />
+            <circle cx="400" cy="400" r="360" fill="none" stroke="#b45309" stroke-width="2" />
+            <circle cx="400" cy="400" r="375" fill="none" stroke="#f59e0b" stroke-width="10" stroke-dasharray="1 9.8" opacity="0.6" />
+            
+            <g class="animate-[spin_180s_linear_infinite]" transform-origin="400 400">
+                <circle cx="400" cy="270" r="110" fill="none" stroke="#d97706" stroke-width="2" />
+                <path d="M 80 400 A 320 320 0 0 1 720 400" fill="none" stroke="#92400e" stroke-width="2" />
+                <path d="M 120 400 A 280 280 0 0 0 680 400" fill="none" stroke="#92400e" stroke-width="1.5" />
+                <path d="M 400 80 Q 500 200 650 250" fill="none" stroke="#b45309" stroke-width="1.5" />
+                <path d="M 400 80 Q 300 200 150 250" fill="none" stroke="#b45309" stroke-width="1.5" />
+                <path d="M 400 720 Q 500 600 650 550" fill="none" stroke="#b45309" stroke-width="1.5" />
+                <path d="M 400 720 Q 300 600 150 550" fill="none" stroke="#b45309" stroke-width="1.5" />
+                <polygon points="150,250 165,260 155,270" fill="#f59e0b" />
+                <polygon points="650,250 635,260 645,270" fill="#f59e0b" />
+            </g>
+
+            <g class="animate-[spin_90s_linear_infinite_reverse]" transform-origin="400 400">
+                <line x1="30" y1="400" x2="770" y2="400" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
+                <line x1="400" y1="30" x2="400" y2="770" stroke="#b45309" stroke-width="1" stroke-dasharray="10 10" opacity="0.5" />
+                <circle cx="400" cy="400" r="30" fill="#080503" stroke="#f59e0b" stroke-width="2" />
+                <circle cx="400" cy="400" r="10" fill="#fbbf24" />
+                <circle cx="400" cy="400" r="60" fill="none" stroke="#92400e" stroke-width="1" />
+            </g>
+        </svg>
+    </div>
+
+    <!-- Ambient Glow container -->
+    <div class="warm-ambient" id="ambient-glow" style="background: radial-gradient(circle, rgba(180, 83, 9, 0.16) 0%, rgba(120, 53, 15, 0.05) 45%, transparent 70%);"></div>
+    <div class="noise-overlay"></div>
+
+    <!-- Header -->
+    <header class="absolute top-10 left-12 right-12 z-40 flex justify-between items-start">
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-4 opacity-80 hover:opacity-100 transition-opacity duration-700">
+                <span class="font-sans font-medium text-lg tracking-widest text-stone-200">THE5W</span>
+                <span class="text-stone-700 font-light text-[15px]">/</span>
+                <span class="text-amber-600/80 font-display text-xl tracking-wider" dir="rtl">بيت الحكمة</span>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-8">
+            <button id="audio-toggle" class="text-amber-500 font-light text-[10px] uppercase tracking-[0.2em] transition-all duration-700 flex items-center gap-3 group">
+                <div class="flex items-end gap-[2px] h-4">
+                    <div id="bar-1" class="w-[2px] h-1 bg-amber-400 animate-electric-1 transition-all duration-300"></div>
+                    <div id="bar-2" class="w-[2px] h-2 bg-amber-400 animate-electric-2 transition-all duration-300"></div>
+                    <div id="bar-3" class="w-[2px] h-3 bg-amber-400 animate-electric-3 transition-all duration-300"></div>
+                </div>
+                <span id="audio-text">[ Sound : On ]</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Progress Indicator -->
+    <div class="absolute left-12 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-4 opacity-60">
+        <span id="current-page-num" class="text-amber-500 font-display text-lg italic">01</span>
+        <div class="w-[1px] h-20 bg-stone-800 relative">
+            <div id="progress-bar" class="absolute top-0 left-0 w-full bg-amber-600 transition-all duration-1000" style="height: 14.28%;"></div>
+        </div>
+        <span class="text-stone-600 font-sans text-xs">07</span> 
+    </div>
+
+    <!-- MAIN SLIDES CONTAINER -->
+    <main class="slide-container" id="slides-wrapper">
+        
+        <!-- SLIDE 01 : Warm Desert Amber -->
+        <section class="slide active pl-32 pr-12">
+            <div class="max-w-4xl">
+                <p class="text-[10px] text-amber-700/80 uppercase tracking-[0.3em] mb-6">Chapter I : The Origin</p>
+                <h1 class="font-display font-normal text-5xl md:text-[5rem] lg:text-[5.5rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
+                    Born into a world <br> 
+                    built upon <span class="text-amber-500/80 italic">fragmented chaos</span>.
+                </h1>
+                <p class="mt-8 text-stone-500 font-light text-sm max-w-lg leading-relaxed">
+                    Like the orphan of the desert, we inherit systems built on hundreds of disjointed, legacy foundations. True architecture begins by observing the noise.
+                </p>
+            </div>
+        </section>
+
+        <!-- SLIDE 02 : Deep Bronze / Ochre -->
+        <section class="slide pl-32 pr-12">
+            <div class="max-w-4xl">
+                <p class="text-[10px] text-amber-600/80 uppercase tracking-[0.3em] mb-6">Chapter II : The 360 Idols</p>
+                <h1 class="font-display font-normal text-5xl md:text-[5rem] lg:text-[5.5rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
+                    Surrounded by <br> 
+                    <span class="text-amber-400/90 italic">360 false idols</span> of architecture.
+                </h1>
+                <p class="mt-8 text-stone-500 font-light text-sm max-w-lg leading-relaxed">
+                    A society fractured by complexity. Over-engineered codebases and tangled dependencies acting as false gods. The sanctuary must be cleansed.
+                </p>
+            </div>
+        </section>
+
+        <!-- SLIDE 03 : Mystical Emerald / Deep Forest Subtle -->
+        <section class="slide pl-32 pr-12">
+            <div class="max-w-5xl">
+                <p class="text-[10px] text-emerald-600/80 uppercase tracking-[0.3em] mb-6">Chapter III : The Cleansing</p>
+                <h1 class="font-display font-normal text-5xl md:text-[5rem] lg:text-[5.5rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
+                    Returning to dismantle <br> 
+                    chaos, restoring <span class="text-emerald-400/90 italic">pure logic</span>.
+                </h1>
+                <p class="mt-8 text-stone-500 font-light text-sm max-w-lg leading-relaxed">
+                    Decades of bloated architecture destroyed. Replacing overwhelming complexity with the unified elegance of a single, universal truth.
+                </p>
+            </div>
+        </section>
+
+        <!-- SLIDE 04 : Celestial Indigo / Midnight Blue -->
+        <section class="slide pl-32 pr-12 flex justify-between items-center w-full">
+            <div class="max-w-2xl">
+                <p class="text-[10px] text-indigo-400/80 uppercase tracking-[0.3em] mb-6">Chapter IV : The One Truth</p>
+                <h1 class="font-display font-normal text-5xl md:text-[4.5rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md mb-6">
+                    Translating chaotic data into <br>
+                    <span class="text-indigo-300 italic">elegant, universal truths.</span>
+                </h1>
+                <p class="text-[9px] text-stone-600 uppercase tracking-[0.2em] border-t border-stone-800/60 pt-4 mt-8 inline-block">
+                    Philosophy <span class="text-indigo-400/70">The Scholar of Systems</span>
+                </p>
+            </div>
+            
+            <aside class="flex flex-col items-center max-w-[350px] opacity-90 cursor-default group mr-12">
+                <p class="text-[11.5px] text-stone-500 tracking-[0.1em] mb-2 group-hover:text-indigo-400 transition-colors duration-700 text-center">
+                    • QS. Ash-Shura (42):11
+                </p>
+                <h2 class="text-4xl md:text-5xl text-indigo-400 font-display mb-1 group-hover:text-indigo-300 transition-colors duration-700 drop-shadow-[0_0_15px_rgba(129,140,248,0.3)] text-center leading-loose" dir="rtl">
+                    <span id="arabic-verse" class="arabic-ink inline-block pt-6 pb-2 px-2">
+                        لَيْسَ كَمِثْلِهِ شَيْءٌ
+                    </span>
+                </h2>
+                <p class="text-[14px] text-stone-300 font-light italic mb-5 text-center">"Laysa kamithlihi shay'un"</p>
+                
+                <div class="flex flex-col items-start gap-1 text-[12.5px] text-stone-400 font-light">
+                    <p>• Beyond Human Reason</p>
+                    <div class="pl-4 flex flex-col gap-1 text-[11.5px] text-stone-500">
+                        <p>• Unimaginable</p>
+                        <p>• Indescribable</p>
+                    </div>
+                    <p class="mt-1 text-[12.5px] text-indigo-400/80 font-medium tracking-wide">• Tanzih (Pure Divine Distinction)</p>
+                </div>
+            </aside>
+        </section>
+
+        <!-- SLIDE 05 : Royal Gold & Teal -->
+        <section class="slide pl-32 pr-12 flex justify-between items-center w-full">
+            <div class="max-w-xl">
+                <p class="text-[10px] text-teal-600/80 uppercase tracking-[0.3em] mb-6">Chapter V : The Golden Legacy</p>
+                <h1 class="font-display font-normal text-4xl md:text-5xl lg:text-[4rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md mb-8">
+                    Science and faith, undivided. <br>
+                    To engineer is to <span class="text-teal-400/90 italic">understand the cosmos.</span>
+                </h1>
+                <p class="text-stone-500 font-light text-sm leading-relaxed mb-6">
+                    The drive to observe the universe birthed the Islamic Golden Age. Building beneficial technology is not merely a profession; it is an act of stewardship (Khalifah) and devotion. We engineer modern systems upon ancient foundations:
+                </p>
+            </div>
+            <div class="max-w-[450px] flex flex-col gap-5 mr-12 opacity-95">
+                <div class="border-l border-teal-900/40 pl-5 hover:border-teal-500/80 transition-colors duration-500 group">
+                    <h3 class="text-teal-500/90 font-display text-xl mb-1 group-hover:text-teal-300 transition-colors">Mathematics & Computing</h3>
+                    <p class="text-[11px] text-stone-400 font-light leading-relaxed">Al-Khawarizmi’s algorithms and the zero (0) numeral system laid the absolute foundations for modern programming.</p>
+                </div>
+                <div class="border-l border-teal-900/40 pl-5 hover:border-teal-500/80 transition-colors duration-500 group">
+                    <h3 class="text-teal-500/90 font-display text-xl mb-1 group-hover:text-teal-300 transition-colors">Mechanics & Automata</h3>
+                    <p class="text-[11px] text-stone-400 font-light leading-relaxed">Al-Jazari’s hydraulic gears and early programmable robots engineered centuries before the industrial revolution.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 06 : Elegant Deep Maroon -->
+        <section class="slide pl-32 pr-12">
+            <div class="max-w-4xl">
+                <p class="text-[10px] text-rose-500/80 uppercase tracking-[0.3em] mb-6">Chapter VI : The Illusion of Nostalgia</p>
+                <h1 class="font-display font-normal text-5xl md:text-[4.5rem] lg:text-[5rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
+                    To admire history without action <br> 
+                    is to <span class="text-rose-400 italic">romanticize decay</span>.
+                </h1>
+                <p class="mt-8 text-stone-400 font-light text-base max-w-2xl leading-relaxed border-l-2 border-rose-900/60 pl-6">
+                    "Are we merely guarding the ashes of the Golden Age, or are we tending to its flame?"
+                </p>
+                <p class="mt-6 text-stone-500 font-light text-sm max-w-xl leading-relaxed">
+                    History is not a museum; it is a blueprint. We are commanded to be critical thinkers (Ulul Albab). What is the purpose of inheriting the mathematics of Al-Khawarizmi if we do not author the next algorithms? Nostalgia without innovation is a betrayal of the intellect we were granted.
+                </p>
+            </div>
+        </section>
+
+        <!-- SLIDE 07 (CHAPTER VII) : Deep Void / Obsidian Cyan -->
+        <section class="slide pl-32 pr-12 flex justify-between items-center w-full gap-12 relative">
+            
+            <!-- CHAPTER 7 PAGE LOCK OVERLAY WITH RIDDLE -->
+            <div id="page7-lock-overlay" class="absolute inset-0 bg-[#060402]/98 z-50 flex flex-col items-center justify-center backdrop-blur-md transition-all duration-700 shadow-[0_0_50px_rgba(0,0,0,0.9)] px-6">
+                <div class="max-w-md w-full bg-[#0d0a07] border border-amber-900/60 rounded-xl p-8 shadow-[0_0_30px_rgba(217,119,6,0.15)] text-center relative">
+                    
+                    <div class="w-16 h-16 rounded-full bg-amber-950/80 border border-amber-700/60 flex items-center justify-center mx-auto mb-5 shadow-[0_0_20px_rgba(217,119,6,0.3)]">
+                        <svg id="page7-lock-svg" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </div>
+
+                    <h2 class="text-amber-500 font-display text-2xl tracking-wider mb-2">Riddle of the Desert Orphan</h2>
+                    <p class="text-stone-400 font-sans text-xs mb-6 leading-relaxed">
+                        "Born in fragmented chaos, tasked to cleanse 360 idols, and bring forth the ultimate light of truth. <span class="text-amber-400 font-medium">Who is the master architect of this legacy mentioned in Chapters I–IV?</span>"
+                    </p>
+
+                    <div class="flex flex-col gap-3">
+                        <input type="text" id="riddle-input" class="bg-black/60 border border-amber-900/50 rounded px-4 py-2.5 text-amber-400 font-mono text-sm text-center outline-none focus:border-amber-500 placeholder-amber-900/40" placeholder="Enter password / name..." autocomplete="off">
+                        <button id="riddle-submit-btn" class="bg-amber-800 hover:bg-amber-700 text-stone-100 font-sans text-xs uppercase tracking-[0.2em] py-2.5 rounded transition-colors shadow-md">
+                            Unlock Chapter VII
+                        </button>
+                    </div>
+                    <p id="riddle-error" class="text-red-400 text-xs mt-3 hidden">Incorrect answer. Review Chapters I - IV carefully.</p>
+                </div>
+            </div>
+
+            <div class="max-w-xl">
+                <p class="text-[10px] text-cyan-500/80 uppercase tracking-[0.3em] mb-6">Chapter VII : The Next Renaissance</p>
+                <h1 class="font-display font-normal text-5xl md:text-[4.5rem] lg:text-[5rem] leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
+                    Do not just read the legacy.<br> 
+                    <span class="text-cyan-400/90 italic">Compile it. Execute it.</span>
+                </h1>
+                <p class="mt-8 text-stone-500 font-light text-sm max-w-xl leading-relaxed">
+                    The next Bayt al-Hikmah will not be built of stone, but of scalable architectures, pure logic, and ethical systems. The tools have changed, but the mandate remains: Seek knowledge, build with purpose, and elevate humanity. 
+                </p>
+            </div>
+
+            <!-- Terminal / CMD Interface with Secondary Lock (Centered Right & Resizable) -->
+            <div id="draggable-terminal-wrapper" class="relative w-full max-w-[500px] h-[380px] z-30 cursor-default select-none mr-12 shrink-0">
+                
+                <!-- Terminal Inner Lock Overlay -->
+                <div id="terminal-lock-overlay" class="absolute inset-0 bg-[#030201]/90 border border-cyan-950/60 rounded-lg z-20 flex flex-col items-center justify-center backdrop-blur-md transition-all duration-700 cursor-pointer group shadow-[0_0_30px_rgba(0,0,0,0.9)]">
+                    <div id="lock-icon-container" class="w-16 h-16 rounded-full bg-cyan-950/60 border border-cyan-700/50 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:border-cyan-400 transition-all duration-500 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                        <svg id="lock-svg" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-cyan-400 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </div>
+                    <p class="text-cyan-400 font-mono text-xs tracking-[0.2em] uppercase mb-1">Terminal Secure Lock</p>
+                    <p class="text-stone-500 font-sans text-[11px] tracking-wider">[ Click to unlock session ]</p>
+                </div>
+
+                <!-- Terminal Container -->
+                <div id="terminal-container" class="w-full h-full bg-[#030201] border border-cyan-950/60 rounded-lg shadow-[0_0_20px_rgba(0,0,0,0.8)] backdrop-blur-md flex flex-col font-mono text-xs md:text-sm text-cyan-400/90 overflow-hidden relative opacity-90 hover:opacity-100 transition-opacity duration-500">
+                    
+                    <!-- Terminal Header (Draggable Handle + Controls) -->
+                    <div id="terminal-header" class="w-full bg-cyan-950/20 border-b border-cyan-900/40 p-2.5 flex items-center justify-between cursor-grab active:cursor-grabbing">
+                        <span class="text-cyan-600/80 text-[10px] tracking-widest uppercase pointer-events-none">Al-Iksr OS (Draggable)</span>
+                        <div class="flex items-center gap-2">
+                            <button id="terminal-back-btn" class="text-[10px] text-cyan-400 bg-cyan-950/60 border border-cyan-800/40 px-2 py-0.5 rounded hover:bg-cyan-900/50 transition-colors uppercase tracking-wider cursor-pointer">
+                                [ Back ]
+                            </button>
+                            <!-- Maximize / Minimize / Expand Controls -->
+                            <div class="flex items-center gap-1.5 ml-1">
+                                <button id="terminal-size-btn" class="w-4 h-4 rounded-full bg-cyan-900/40 border border-cyan-700/50 flex items-center justify-center text-[9px] text-cyan-300 hover:bg-cyan-700 hover:text-white transition-colors cursor-pointer" title="Maximize / Restore">
+                                    +
+                                </button>
+                                <div class="w-2.5 h-2.5 rounded-full bg-stone-800/80"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Terminal Body (Output) -->
+                    <div id="terminal-output" class="flex-1 p-4 overflow-y-auto space-y-1.5 custom-scrollbar">
+                        <div class="text-stone-500 mb-4">
+                            System Initialized. Kernel v1.0.0<br>
+                            Authentication successful. Welcome, Scholar.<br>
+                            Type <span class="text-cyan-300">help</span> to begin sequence or click <span class="text-cyan-300">[ Back ]</span> anytime.
+                        </div>
+                    </div>
+
+                    <!-- Terminal Input -->
+                    <div class="p-4 pt-1 pb-4 flex items-center gap-2">
+                        <span class="text-cyan-600">root@bayt-al-hikmah:~$</span>
+                        <input type="text" id="terminal-input" class="bg-transparent border-none outline-none flex-1 text-cyan-300 font-mono focus:ring-0 placeholder-cyan-900/30" placeholder="Enter command or type 'back'..." autocomplete="off" spellcheck="false">
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-3 opacity-70">
+        <div class="w-6 h-9 border border-amber-700/50 rounded-full flex justify-center p-1 relative backdrop-blur-sm bg-black/20">
+            <div class="w-1 h-2 bg-amber-500 rounded-full animate-bounce-subtle shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
+        </div>
+        <span class="text-[10px] font-sans font-light text-stone-400 tracking-[0.1em] bg-stone-900/60 px-3 py-1 rounded-full border border-stone-800 uppercase">
+            Scroll to next chapter
+        </span>
+    </div>
+
+    <!-- Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.slide');
+            const pageNum = document.getElementById('current-page-num');
+            const progressBar = document.getElementById('progress-bar');
+            const ambientGlow = document.getElementById('ambient-glow');
+            
+            const splashScreen = document.getElementById('splash-screen');
+            const audio = document.getElementById('bg-music');
+            const audioToggle = document.getElementById('audio-toggle');
+            const audioText = document.getElementById('audio-text');
+            const bar1 = document.getElementById('bar-1');
+            const bar2 = document.getElementById('bar-2');
+            const bar3 = document.getElementById('bar-3');
+            
+            const arabicVerse = document.getElementById('arabic-verse');
+
+            const terminalInput = document.getElementById('terminal-input');
+            const terminalOutput = document.getElementById('terminal-output');
+            const terminalContainer = document.getElementById('terminal-container');
+            const terminalHeader = document.getElementById('terminal-header');
+            const draggableTerminalWrapper = document.getElementById('draggable-terminal-wrapper');
+            const terminalBackBtn = document.getElementById('terminal-back-btn');
+            const terminalSizeBtn = document.getElementById('terminal-size-btn');
+            
+            // Draggable Terminal Logic
+            let isDragging = false;
+            let startX, startY;
+            let currentX = 0;
+            let currentY = 0;
+            let isMaximized = false;
+
+            terminalHeader.addEventListener('mousedown', (e) => {
+                if (isMaximized) return; // Do not drag when maximized
+                isDragging = true;
+                startX = e.clientX - currentX;
+                startY = e.clientY - currentY;
+                terminalHeader.style.cursor = 'grabbing';
+                e.preventDefault();
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging || isMaximized) return;
+                currentX = e.clientX - startX;
+                currentY = e.clientY - startY;
+                draggableTerminalWrapper.style.transform = `translate(${currentX}px, ${currentY}px)`;
+            });
+
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+                terminalHeader.style.cursor = 'grab';
+            });
+
+            // Maximize / Minimize toggle
+            terminalSizeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                isMaximized = !isMaximized;
+                if (isMaximized) {
+                    draggableTerminalWrapper.style.transform = 'translate(0px, 0px)';
+                    draggableTerminalWrapper.style.position = 'fixed';
+                    draggableTerminalWrapper.style.top = '50%';
+                    draggableTerminalWrapper.style.left = '50%';
+                    draggableTerminalWrapper.style.transform = 'translate(-50%, -50%)';
+                    draggableTerminalWrapper.style.width = '85vw';
+                    draggableTerminalWrapper.style.height = '80vh';
+                    draggableTerminalWrapper.style.maxWidth = 'none';
+                    terminalSizeBtn.innerText = '-';
+                    terminalSizeBtn.title = 'Restore Size';
+                } else {
+                    draggableTerminalWrapper.style.position = 'relative';
+                    draggableTerminalWrapper.style.top = 'auto';
+                    draggableTerminalWrapper.style.left = 'auto';
+                    draggableTerminalWrapper.style.transform = `translate(${currentX}px, ${currentY}px)`;
+                    draggableTerminalWrapper.style.width = '100%';
+                    draggableTerminalWrapper.style.maxWidth = '500px';
+                    draggableTerminalWrapper.style.height = '380px';
+                    terminalSizeBtn.innerText = '+';
+                    terminalSizeBtn.title = 'Maximize';
+                }
+            });
+
+            // Riddle & Lock elements
+            const page7LockOverlay = document.getElementById('page7-lock-overlay');
+            const page7LockSvg = document.getElementById('page7-lock-svg');
+            const riddleInput = document.getElementById('riddle-input');
+            const riddleSubmitBtn = document.getElementById('riddle-submit-btn');
+            const riddleError = document.getElementById('riddle-error');
+            
+            const terminalLockOverlay = document.getElementById('terminal-lock-overlay');
+            const lockSvg = document.getElementById('lock-svg');
+            
+            let isPage7Unlocked = false;
+            let isTerminalUnlocked = false;
+
+            let currentSlideIndex = 0;
+            let isAnimating = false;
+            let isPlaying = false;
+            let arabicAnimationTimeout;
+            
+            // Refined distinct elegant ambient background glows for Chapters 1-7
+            const glowStates = [
+                /* Ch 1: Warm Desert Amber */
+                'radial-gradient(circle, rgba(180, 83, 9, 0.16) 0%, rgba(120, 53, 15, 0.05) 45%, transparent 70%)',
+                /* Ch 2: Deep Bronze / Ochre */
+                'radial-gradient(circle, rgba(202, 138, 4, 0.15) 0%, rgba(113, 63, 18, 0.04) 45%, transparent 70%)',
+                /* Ch 3: Mystical Forest / Emerald subtle */
+                'radial-gradient(circle, rgba(16, 126, 88, 0.16) 0%, rgba(6, 78, 59, 0.05) 45%, transparent 70%)',
+                /* Ch 4: Celestial Indigo */
+                'radial-gradient(circle, rgba(79, 70, 229, 0.18) 0%, rgba(49, 46, 129, 0.06) 45%, transparent 70%)',
+                /* Ch 5: Royal Teal & Gold */
+                'radial-gradient(circle, rgba(13, 148, 136, 0.16) 0%, rgba(19, 78, 74, 0.05) 45%, transparent 70%)',
+                /* Ch 6: Elegant Deep Maroon (Requested) */
+                'radial-gradient(circle, rgba(159, 18, 57, 0.22) 0%, rgba(136, 19, 55, 0.08) 50%, transparent 75%)',
+                /* Ch 7: Deep Obsidian Cyan / Void */
+                'radial-gradient(circle, rgba(8, 145, 178, 0.18) 0%, rgba(21, 94, 117, 0.06) 45%, transparent 70%)'
+            ];
+
+            // Auto Play Splash
+            splashScreen.addEventListener('click', () => {
+                splashScreen.style.opacity = '0';
+                setTimeout(() => splashScreen.style.visibility = 'hidden', 1000);
+                
+                audio.volume = 0.6;
+                audio.play().then(() => {
+                    isPlaying = true;
+                }).catch(e => {
+                    console.error("Audio playback failed:", e);
+                    audioText.innerText = '[ Audio Failed ]';
+                    toggleAudioVisuals(false);
+                });
+            });
+
+            // Audio Controls
+            function toggleAudioVisuals(active) {
+                if(active) {
+                    audioText.innerText = '[ Sound : On ]';
+                    audioToggle.classList.replace('text-amber-700/50', 'text-amber-500');
+                    bar1.classList.add('animate-electric-1', 'bg-amber-400');
+                    bar2.classList.add('animate-electric-2', 'bg-amber-400');
+                    bar3.classList.add('animate-electric-3', 'bg-amber-400');
+                } else {
+                    audioText.innerText = '[ Sound : Off ]';
+                    audioToggle.classList.replace('text-amber-500', 'text-amber-700/50');
+                    bar1.classList.remove('animate-electric-1', 'bg-amber-400');
+                    bar2.classList.remove('animate-electric-2', 'bg-amber-400');
+                    bar3.classList.remove('animate-electric-3', 'bg-amber-400');
+                }
+            }
+
+            audioToggle.addEventListener('click', () => {
+                if (isPlaying) {
+                    audio.pause();
+                    isPlaying = false;
+                    toggleAudioVisuals(false);
+                } else {
+                    audio.play();
+                    isPlaying = true;
+                    toggleAudioVisuals(true);
+                }
+            });
+
+            function triggerArabicAnimation() {
+                clearTimeout(arabicAnimationTimeout);
+                arabicVerse.classList.remove('reveal');
+                arabicAnimationTimeout = setTimeout(() => {
+                    arabicVerse.classList.add('reveal');
+                }, 800);
+            }
+
+            // Scroll Logic
+            function updateSlide(newIndex, direction) {
+                if (currentSlideIndex === 6 && direction === 'up' && !isPage7Unlocked) {
+                    return; 
+                }
+
+                if (isAnimating || newIndex < 0 || newIndex >= slides.length) return;
+                
+                isAnimating = true;
+
+                const currentSlide = slides[currentSlideIndex];
+                currentSlide.classList.remove('active');
+                currentSlide.classList.add(direction === 'down' ? 'exit-up' : 'exit-down');
+
+                const nextSlide = slides[newIndex];
+                nextSlide.classList.remove('exit-up', 'exit-down');
+                void nextSlide.offsetWidth; 
+                nextSlide.classList.add('active');
+                
+                currentSlideIndex = newIndex;
+                pageNum.innerText = `0${currentSlideIndex + 1}`;
+                progressBar.style.height = `${((currentSlideIndex + 1) / slides.length) * 100}%`;
+                ambientGlow.style.background = glowStates[currentSlideIndex];
+
+                if(currentSlideIndex === 3) {
+                    triggerArabicAnimation();
+                }
+                
+                if(currentSlideIndex === 6) {
+                    isPage7Unlocked = false;
+                    isTerminalUnlocked = false;
+                    isMaximized = false;
+                    currentX = 0;
+                    currentY = 0;
+                    draggableTerminalWrapper.style.position = 'relative';
+                    draggableTerminalWrapper.style.top = 'auto';
+                    draggableTerminalWrapper.style.left = 'auto';
+                    draggableTerminalWrapper.style.transform = `translate(0px, 0px)`;
+                    draggableTerminalWrapper.style.width = '100%';
+                    draggableTerminalWrapper.style.maxWidth = '500px';
+                    draggableTerminalWrapper.style.height = '380px';
+                    terminalSizeBtn.innerText = '+';
+                    
+                    page7LockOverlay.style.opacity = '1';
+                    page7LockOverlay.style.visibility = 'visible';
+                    riddleInput.value = '';
+                    riddleError.classList.add('hidden');
+                    page7LockSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />';
+
+                    terminalLockOverlay.style.opacity = '1';
+                    terminalLockOverlay.style.visibility = 'visible';
+                    lockSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />';
+                    terminalInput.blur();
+                } else {
+                    terminalInput.blur();
+                }
+
+                setTimeout(() => {
+                    isAnimating = false;
+                    currentSlide.classList.remove('exit-up', 'exit-down');
+                }, 1200);
+            }
+
+            window.addEventListener('wheel', (e) => {
+                if (currentSlideIndex === 6 && !isPage7Unlocked) {
+                    return; 
+                }
+                if (currentSlideIndex === 6 && terminalContainer.contains(e.target)) {
+                    return; 
+                }
+                if (e.deltaY > 20) updateSlide(currentSlideIndex + 1, 'down');
+                else if (e.deltaY < -20) updateSlide(currentSlideIndex - 1, 'up');
+            });
+
+            let touchStartY = 0;
+            window.addEventListener('touchstart', e => {
+                if (currentSlideIndex === 6 && !isPage7Unlocked) return;
+                if (currentSlideIndex === 6 && terminalContainer.contains(e.target)) return;
+                touchStartY = e.changedTouches[0].screenY;
+            });
+            window.addEventListener('touchend', e => {
+                if (currentSlideIndex === 6 && !isPage7Unlocked) return;
+                if (currentSlideIndex === 6 && terminalContainer.contains(e.target)) return;
+                let touchEndY = e.changedTouches[0].screenY;
+                if (touchStartY - touchEndY > 50) updateSlide(currentSlideIndex + 1, 'down');
+                if (touchEndY - touchStartY > 50) updateSlide(currentSlideIndex - 1, 'up');
+            });
+
+            // Handle Riddle Verification for Chapter 7
+            function checkRiddle() {
+                const val = riddleInput.value.trim().toLowerCase();
+                if (val === 'muhammad') {
+                    isPage7Unlocked = true;
+                    page7LockSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />';
+                    setTimeout(() => {
+                        page7LockOverlay.style.opacity = '0';
+                        page7LockOverlay.style.visibility = 'hidden';
+                    }, 400);
+                } else {
+                    riddleError.classList.remove('hidden');
+                    riddleInput.classList.add('border-red-500');
+                    setTimeout(() => riddleInput.classList.remove('border-red-500'), 1000);
+                }
+            }
+
+            riddleSubmitBtn.addEventListener('click', checkRiddle);
+            riddleInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    checkRiddle();
+                }
+            });
+
+            // Unlock Terminal Interaction
+            terminalLockOverlay.addEventListener('click', (e) => {
+                e.stopPropagation();
+                isTerminalUnlocked = true;
+                lockSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />';
+                
+                setTimeout(() => {
+                    terminalLockOverlay.style.opacity = '0';
+                    terminalLockOverlay.style.visibility = 'hidden';
+                    terminalInput.focus();
+                }, 350);
+            });
+
+            // --- TERMINAL COMMANDS ---
+            terminalContainer.addEventListener('click', () => {
+                if (isTerminalUnlocked) {
+                    terminalInput.focus();
+                }
+            });
+
+            const terminalCommands = {
+                'help': `AVAILABLE COMMANDS:<br>
+                         <span class="text-cyan-300">help</span>    - Show this manual<br>
+                         <span class="text-cyan-300">status</span>  - Check system integrity<br>
+                         <span class="text-cyan-300">iceberg</span> - View taxonomy index<br>
+                         <span class="text-cyan-300">layer [1-8]</span> - Access specific depth (e.g., 'layer 1')<br>
+                         <span class="text-cyan-300">[item name]</span> - Type any item from iceberg to get details (e.g., 'five pillars', 'sirah nabawiyyah')<br>
+                         <span class="text-cyan-300">back</span>    - Return to main menu / summary<br>
+                         <span class="text-cyan-300">clear</span>   - Clear the terminal screen`,
+                
+                'status': `<span class="text-green-500">System optimal.</span> Logic gates: stable. Taxonomy DB loaded.`,
+                
+                'clear': 'CLEAR_FLAG',
+
+                'back': `Returned to main navigation view.<br>Type <span class="text-cyan-300">iceberg</span> to view taxonomy levels or <span class="text-cyan-300">help</span> for options.`,
+
+                'iceberg': `THE ISLAMIC ICEBERG: A COMPREHENSIVE TAXONOMY<br>
+                            <span class="text-stone-600">-------------------------------------------</span><br>
+                            <span class="text-blue-300/80 text-[10px] tracking-widest">THE SURFACE</span><br>
+                            > <span class="text-cyan-400">layer 1</span> : General & Practical Tiers<br>
+                            <span class="text-blue-500/80 text-[10px] tracking-widest mt-1 block">DEEP SEA</span><br>
+                            > <span class="text-cyan-400">layer 2</span> : Shallow Waters - Theological Dynamics<br>
+                            > <span class="text-cyan-400">layer 3</span> : Complex History & Philosophy<br>
+                            > <span class="text-cyan-400">layer 4</span> : Ocean Floor & Esotericism<br>
+                            <span class="text-indigo-400/80 text-[10px] tracking-widest mt-1 block">DEEPEST LAYERS</span><br>
+                            > <span class="text-cyan-400">layer 5</span> : Abyssal Zone<br>
+                            > <span class="text-cyan-400">layer 6</span> : Oceanic Crust Floor<br>
+                            > <span class="text-cyan-400">layer 7</span> : Alam Al-Ghayb & Cosmology<br>
+                            > <span class="text-cyan-400">layer 8</span> : Al-'Amah & Dzat Mutlaq (The Void)`,
+
+                'layer 1': `<span class="text-cyan-300 font-bold">[LAYER 1: GENERAL & PRACTICAL TIERS]</span><br>
+                            <span class="text-stone-500 text-[10px] uppercase tracking-widest border-b border-stone-800 mb-1 inline-block">Depth: The Surface</span><br>
+                            <span class="text-stone-300">
+                            > <span class="text-cyan-200">Five Pillars</span><br>
+                            > <span class="text-cyan-200">Four Juristic Schools</span> (Madhhabs)<br>
+                            > <span class="text-cyan-200">Sirah Nabawiyyah</span> (type to inspect)</span>`,
+
+                'layer 2': `<span class="text-cyan-300 font-bold">[LAYER 2: SHALLOW WATERS]</span><br>
+                            <span class="text-stone-500 text-[10px] uppercase tracking-widest border-b border-stone-800 mb-1 inline-block">Depth: Deep Sea / Theological Dynamics</span><br>
+                            <span class="text-stone-300">
+                            > <span class="text-cyan-200">Ilm al-Kalam</span><br>
+                            > <span class="text-cyan-200">Hadith Sciences</span> & Al-'Illal<br>
+                            > <span class="text-cyan-200">Quranic Qira'at</span></span>`,
+
+                'layer 3': `<span class="text-cyan-300 font-bold">[LAYER 3: COMPLEX HISTORY & PHILOSOPHY]</span><br>
+                            <span class="text-stone-500 text-[10px] uppercase tracking-widest border-b border-stone-800 mb-1 inline-block">Depth: Deep Sea</span><br>
+                            <span class="text-stone-300">
+                            > <span class="text-cyan-200">Avicenna & Averroes</span><br>
+                            > <span class="text-cyan-200">Fitnah Kubra</span> (battle lines, broken connections)<br>
+                            > <span class="text-cyan-200">Sufi Shatahat</span></span>`,
+
+                'layer 4': `<span class="text-cyan-300 font-bold">[LAYER 4: OCEAN FLOOR & ESOTERICISM]</span><br>
+                            <span class="text-stone-500 text-[10px] uppercase tracking-widest border-b border-stone-800 mb-1 inline-block">Depth: Deep Sea</span><br>
+                            <span class="text-stone-300">
+                            > <span class="text-cyan-200">Hurufiyyah</span> (letters and numbers)<br>
+                            > <span class="text-cyan-200">Alchemy</span> (Lab equipment formula ibn hayyan)<br>
+                            > <span class="text-cyan-200">Ancient Manuscripts</span></span>`,
+
+                'layer 5': `<span class="text-cyan-300 font-bold">[LAYER 5: ABYSSAL ZONE]</span><br>
+                            <span class="text-stone-500 text-[10px] uppercase tracking-widest border-b border-stone-800 mb-1 inline-block">Depth: Deepest Layers</span><br>
+                            <span class="text-stone-300">
+                            > <span class="text-cyan-200">Contemporary Textual Critique</span><br>
+                            > <span class="text-cyan-200">Tripartite Reason</span><br>
+                            > <span class="text-cyan-200">Illuminationism</span></span>`,
+
+                'layer 6': `<span class="text-cyan-300 font-bold">[LAYER 6: OCEANIC CRUST FLOOR]</span><br>
+                            <span class="text-stone-500 text-[10px] uppercase tracking-widest border-b border-stone-800 mb-1 inline-block">Depth: Deepest Layers</span><br>
+                            <span class="text-stone-300">
+                            > <span class="text-cyan-200">Sirr al-Sirr</span> (Secret)<br>
+                            > <span class="text-cyan-200">Lost Manuscripts</span><br>
+                            > <span class="text-cyan-200">Paradox Jahl 'Arif</span></span>`,
+
+                'layer 7': `<span class="text-cyan-300 font-bold">[LAYER 7: ALAM AL-GHAYB & ESOTERIC COSMOLOGY]</span><br>
+                            <span class="text-stone-500 text-[10px] uppercase tracking-widest border-b border-stone-800 mb-1 inline-block">Depth: Deepest Layers</span><br>
+                            <span class="text-stone-300">
+                            > <span class="text-cyan-200">Nur Muhammad</span><br>
+                            > <span class="text-cyan-200">Alam al-Mithal</span><br>
+                            > <span class="text-cyan-200">Hadd al-'Aql</span> (Limits of intellect)</span>`,
+
+                'layer 8': `<span class="text-cyan-300 font-bold">[LAYER 8: AL-'AMAH & DZAT MUTLAQ (THE VOID)]</span><br>
+                            <span class="text-stone-500 text-[10px] uppercase tracking-widest border-b border-stone-800 mb-1 inline-block">Depth: Bahrun bila Syati (Endless Ocean)</span><br>
+                            <span class="text-stone-300">
+                            > <span class="text-cyan-200">Dzat Mutlaq</span> (Absolute Godhead)<br>
+                            > <span class="text-cyan-200">Al-'Amah</span><br>
+                            > <span class="text-cyan-200">As-Sukt</span> (Silence)</span>`,
+
+                'five pillars': `<span class="text-cyan-300 font-bold">[FIVE PILLARS] (Layer 1)</span><br>
+                                 <span class="text-stone-300">The foundational framework of practice (Shahada, Salah, Zakat, Sawm, Hajj). Acting as the visible baseline structure of faith.</span>`,
+
+                'four juristic schools': `<span class="text-cyan-300 font-bold">[FOUR JURISTIC SCHOOLS / MADHHABS] (Layer 1)</span><br>
+                                          <span class="text-stone-300">Hanafi, Maliki, Shafi'i, and Hanbali schools of jurisprudence providing structural methodologies for Islamic law and daily societal engineering.</span>`,
+                
+                'madhhabs': `<span class="text-cyan-300 font-bold">[FOUR JURISTIC SCHOOLS / MADHHABS] (Layer 1)</span><br>
+                             <span class="text-stone-300">Hanafi, Maliki, Shafi'i, and Hanbali schools of jurisprudence providing structural methodologies for Islamic law and daily societal engineering.</span>`,
+
+                'sirah nabawiyyah': `<span class="text-cyan-300 font-bold">[SIRAH NABAWIYYAH] (Layer 1)</span><br>
+                                     <span class="text-stone-300">Historical Summary:<br>The biographical record and historical blueprint of Prophet Muhammad SAW's mission in guiding civilization from the age of ignorance (Jahiliyyah) toward the enlightenment of monotheism, establishing societal order in Medina, and serving as the supreme model of humanitarian ethics.</span>`,
+
+                'ilm al-kalam': `<span class="text-cyan-300 font-bold">[ILM AL-KALAM] (Layer 2)</span><br>
+                                 <span class="text-stone-300">Islamic scholastic theology exploring articles of faith through dialectical reasoning, philosophical logic, and rational debate against external dogmas.</span>`,
+
+                'hadith sciences': `<span class="text-cyan-300 font-bold">[HADITH SCIENCES & AL-'ILLAL] (Layer 2)</span><br>
+                                    <span class="text-stone-300">Critical transmission critique (Isnad analysis) and subtle hidden flaws detection (Ilal) to verify historical authenticity of prophetic sayings.</span>`,
+
+                'quranic qira\'at': `<span class="text-cyan-300 font-bold">[QURANIC QIRA'AT] (Layer 2)</span><br>
+                                    <span class="text-stone-300">The canonical variations of Quranic recitation tied to historical dialects and oral preservation frameworks.</span>`,
+
+                'avicenna & averroes': `<span class="text-cyan-300 font-bold">[AVICENNA & AVERROES] (Layer 3)</span><br>
+                                        <span class="text-stone-300">Ibn Sina (Avicenna) and Ibn Rushd (Averroes): Pioneers bridging Aristotelian philosophy, metaphysics, and empirical medicine.</span>`,
+
+                'fitnah kubra': `<span class="text-cyan-300 font-bold">[FITNAH KUBRA] (Layer 3)</span><br>
+                                 <span class="text-stone-300">The great historical civil schisms and political fractures following early Islamic leadership transitions that shaped sectarian trajectories.</span>`,
+
+                'sufi shatahat': `<span class="text-cyan-300 font-bold">[SUFI SHATAHT] (Layer 3)</span><br>
+                                 <span class="text-stone-300">Ecstatic utterances and mystical paradoxes spoken by gnostics (such as Al-Hallaj) during deep spiritual transcendence.</span>`,
+
+                'hurufiyyah': `<span class="text-cyan-300 font-bold">[HURUFIYYAH] (Layer 4)</span><br>
+                              <span class="text-stone-300">Esoteric science of letters, numbers, and numerical codes (Abjad) underlying the cosmic structure of creation.</span>`,
+
+                'alchemy': `<span class="text-cyan-300 font-bold">[ALCHEMY] (Layer 4)</span><br>
+                            <span class="text-stone-300">Jabir ibn Hayyan (Geber) and early laboratory experimentation formulas, combining proto-chemistry with spiritual transformation.</span>`,
+
+                'ancient manuscripts': `<span class="text-cyan-300 font-bold">[ANCIENT MANUSCRIPTS] (Layer 4)</span><br>
+                                        <span class="text-stone-300">Preserved historical codices, astronomical charts, and philosophical treatises housed in historical archives.</span>`,
+
+                'contemporary textual critique': `<span class="text-cyan-300 font-bold">[CONTEMPORARY TEXTUAL CRITIQUE] (Layer 5)</span><br>
+                                                  <span class="text-stone-300">Modern hermeneutics and deconstructive analysis applied to classical religious texts.</span>`,
+
+                'tripartite reason': `<span class="text-cyan-300 font-bold">[TRIPARTITE REASON] (Layer 5)</span><br>
+                                      <span class="text-stone-300">Multi-layered epistemic framework balancing sensory perception, rational deduction, and intuitive illumination.</span>`,
+
+                'illuminationism': `<span class="text-cyan-300 font-bold">[ILLUMINATIONISM] (Layer 5)</span><br>
+                                    <span class="text-stone-300">Suhrawardi’s philosophy of light (Hikmat al-Ishraq), arguing reality is a hierarchy of divine illumination.</span>`,
+
+                'sirr al-sirr': `<span class="text-cyan-300 font-bold">[SIRR AL-SIRR] (Layer 6)</span><br>
+                                <span class="text-stone-300">The "Secret of Secrets"—the innermost sanctum of the human spiritual heart beyond ordinary consciousness.</span>`,
+
+                'lost manuscripts': `<span class="text-cyan-300 font-bold">[LOST MANUSCRIPTS] (Layer 6)</span><br>
+                                     <span class="text-stone-300">Works referenced in historical records whose physical copies have vanished into time.</span>`,
+
+                'paradox jahl \'arif': `<span class="text-cyan-300 font-bold">[PARADOX JAHL 'ARIF] (Layer 6)</span><br>
+                                        <span class="text-stone-300">The realization of the Gnostic's conscious ignorance: knowing that absolute comprehension of the Divine Essence is impossible.</span>`,
+
+                'nur muhammad': `<span class="text-cyan-300 font-bold">[NUR MUHAMMAD] (Layer 7)</span><br>
+                                 <span class="text-stone-300">The primordial prophetic light from which all creation and cosmic blueprints were manifested.</span>`,
+
+                'alam al-mithal': `<span class="text-cyan-300 font-bold">[ALAM AL-MITHAL] (Layer 7)</span><br>
+                                  <span class="text-stone-300">The imaginal realm (Mundus Imaginalis)—an intermediary dimension where spiritual realities take subtle forms.</span>`,
+
+                'hadd al-\'aql': `<span class="text-cyan-300 font-bold">[HADD AL-'AQL] (Layer 7)</span><br>
+                                  <span class="text-stone-300">The absolute boundary and limit of human intellect before entering the transcendent unknown.</span>`,
+
+                'dzat mutlaq': `<span class="text-cyan-300 font-bold">[DZAT MUTLAQ] (Layer 8)</span><br>
+                              <span class="text-stone-300">The Absolute Godhead—unconditioned, nameless, and beyond all attributes (The Void / Essence).</span>`,
+
+                'al-\'amah': `<span class="text-cyan-300 font-bold">[AL-'AMAH] (Layer 8)</span><br>
+                             <span class="text-stone-300">The primordial blind cloud or dark mist of unmanifested potential before the creation of the cosmos.</span>`,
+
+                'as-sukt': `<span class="text-cyan-300 font-bold">[AS-SUKT] (Layer 8)</span><br>
+                            <span class="text-stone-300">Silence. The ultimate state beyond language, logic, and descriptions where discursive thought ceases.</span>`
+            };
+
+            function printToTerminal(text, isCommand = false) {
+                const line = document.createElement('div');
+                
+                if (isCommand) {
+                    line.innerHTML = `<span class="text-cyan-600">root@bayt-al-hikmah:~$</span> <span class="text-cyan-300">${text}</span>`;
+                } else {
+                    line.className = 'text-stone-400 pl-4 border-l-2 border-cyan-900/60 my-2';
+                    line.innerHTML = text;
+                }
+                
+                terminalOutput.appendChild(line);
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }
+
+            function handleCommandString(rawCmd) {
+                const cmd = rawCmd.trim().toLowerCase();
+                if (cmd === '') return;
+
+                printToTerminal(rawCmd.trim(), true);
+                
+                if (terminalCommands[cmd]) {
+                    if (terminalCommands[cmd] === 'CLEAR_FLAG') {
+                        terminalOutput.innerHTML = '';
+                    } else {
+                        printToTerminal(terminalCommands[cmd]);
+                    }
+                } else {
+                    printToTerminal(`Command or item not found: '<span class="text-red-400">${cmd}</span>'. Type 'help' for available commands or 'iceberg' to view taxonomy.`);
+                }
+            }
+
+            terminalInput.addEventListener('keydown', function(e) {
+                (e.key === 'Enter') && (handleCommandString(this.value), this.value = '');
+            });
+
+            terminalBackBtn.addEventListener('click', () => {
+                handleCommandString('back');
+            });
+
+        });
+    </script>
+</body>
+</html>
