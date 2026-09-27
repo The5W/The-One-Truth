@@ -86,7 +86,7 @@
             width: 120vw; height: 120vh;
             pointer-events: none;
             z-index: 2;
-            transition: background 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: background 2.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         /* Noise Overlay */
@@ -114,26 +114,82 @@
             align-items: center;
             opacity: 0;
             visibility: hidden;
-            transform: translateY(40px);
-            transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            transform: translateY(60px) scale(0.95);
+            filter: blur(12px);
+            pointer-events: none;
+            transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1),
+                        opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1),
+                        filter 1.5s cubic-bezier(0.16, 1, 0.3, 1),
+                        visibility 1.5s ease;
+            will-change: transform, opacity, filter;
         }
 
-        .slide.active { opacity: 1; visibility: visible; transform: translateY(0); }
-        .slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-40px); }
-        .slide.exit-down { opacity: 0; visibility: hidden; transform: translateY(40px); }
+        .slide.active { 
+            opacity: 1; 
+            visibility: visible; 
+            transform: translateY(0) scale(1);
+            filter: blur(0px);
+            pointer-events: auto;
+        }
 
-        /* Arabic Ink Reveal */
+        .slide.exit-up { 
+            opacity: 0; 
+            visibility: hidden; 
+            transform: translateY(-60px) scale(0.95);
+            filter: blur(12px);
+            pointer-events: none;
+        }
+
+        .slide.exit-down { 
+            opacity: 0; 
+            visibility: hidden; 
+            transform: translateY(60px) scale(0.95);
+            filter: blur(12px);
+            pointer-events: none;
+        }
+
+        /* Staggered elements animation for cinematic entrance */
+        /* Arabic Ink Reveal & Right-to-Left Pen Handwriting */
+        .arabic-ink-container {
+            position: relative;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+        }
+
         .arabic-ink {
-            clip-path: inset(0 0 0 100%);
-            -webkit-clip-path: inset(0 0 0 100%);
+            white-space: nowrap;
+            clip-path: inset(-20px -20px -20px 100%);
+            -webkit-clip-path: inset(-20px -20px -20px 100%);
             transition: clip-path 3.5s cubic-bezier(0.4, 0, 0.2, 1), -webkit-clip-path 3.5s cubic-bezier(0.4, 0, 0.2, 1), filter 3.5s ease-out;
-            filter: blur(2px) brightness(1.5);
+            filter: blur(1.5px) brightness(1.4);
         }
 
         .arabic-ink.reveal {
-            clip-path: inset(0 0 0 0%);
-            -webkit-clip-path: inset(0 0 0 0%);
+            clip-path: inset(-20px -20px -20px -20px);
+            -webkit-clip-path: inset(-20px -20px -20px -20px);
             filter: blur(0px) brightness(1);
+        }
+
+        /* Glowing Pen Nib Cursor */
+        .pen-nib {
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 8px;
+            height: 8px;
+            background: #a5b4fc;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #818cf8, 0 0 20px #6366f1, 0 0 30px #4f46e5;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            pointer-events: none;
+            transition: left 3.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            z-index: 20;
+        }
+
+        .pen-nib.writing {
+            opacity: 1;
+            left: -2%;
         }
 
         /* Splash Screen */
@@ -147,10 +203,9 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            transition: opacity 1s ease-out, visibility 1s ease-out;
+            transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
         }
 
-        /* Terminal Window States */
         #draggable-terminal-wrapper {
             transition: width 0.3s ease, height 0.3s ease;
         }
@@ -164,12 +219,12 @@
         <p class="text-stone-500 font-light tracking-[0.3em] uppercase text-xs md:text-sm animate-pulse-slow">Tap to Enter the Sanctuary</p>
     </div>
 
-    <!-- Audio -->
+    <!-- Audio Element -->
     <audio id="bg-music" loop crossorigin="anonymous">
         <source src="https://raw.githubusercontent.com/The5W/The-One-Truth/main/Desert%20Journey.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Astrolabe SVG -->
+    <!-- Astrolabe Vector Background -->
     <div class="astrolabe-bg">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" class="w-full h-full">
             <circle cx="400" cy="400" r="395" fill="none" stroke="#78350f" stroke-width="1" />
@@ -204,7 +259,7 @@
     <div class="warm-ambient" id="ambient-glow" style="background: radial-gradient(circle, rgba(180, 83, 9, 0.16) 0%, rgba(120, 53, 15, 0.05) 45%, transparent 70%);"></div>
     <div class="noise-overlay"></div>
 
-    <!-- Header -->
+    <!-- Header Navigation -->
     <header class="absolute top-6 left-6 right-6 md:top-10 md:left-12 md:right-12 z-40 flex justify-between items-start md:items-center">
         <div class="flex items-center gap-6">
             <div class="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 opacity-80 hover:opacity-100 transition-opacity duration-700">
@@ -215,30 +270,37 @@
         </div>
         
         <div class="flex items-center gap-8 mt-1 md:mt-0">
-            <button id="audio-toggle" class="text-amber-500 font-light text-[9px] md:text-[10px] uppercase tracking-[0.2em] transition-all duration-700 flex items-center gap-2 md:gap-3 group">
+            <button id="audio-toggle" class="text-amber-500 font-light text-[9px] md:text-[10px] uppercase tracking-[0.2em] transition-all duration-700 flex items-center gap-2 md:gap-3 group cursor-pointer">
                 <div class="flex items-end gap-[2px] h-3 md:h-4">
                     <div id="bar-1" class="w-[2px] h-1 bg-amber-400 animate-electric-1 transition-all duration-300"></div>
                     <div id="bar-2" class="w-[2px] h-2 bg-amber-400 animate-electric-2 transition-all duration-300"></div>
                     <div id="bar-3" class="w-[2px] h-3 bg-amber-400 animate-electric-3 transition-all duration-300"></div>
                 </div>
-                <span id="audio-text" class="whitespace-nowrap">[ Sound : On ]</span>
+                <span id="audio-text" class="whitespace-nowrap">[ Sound : Off ]</span>
             </button>
         </div>
     </header>
 
-    <!-- Progress Indicator -->
-    <div class="hidden md:flex absolute left-12 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-4 opacity-60">
-        <span id="current-page-num" class="text-amber-500 font-display text-lg italic">01</span>
-        <div class="w-[1px] h-20 bg-stone-800 relative">
-            <div id="progress-bar" class="absolute top-0 left-0 w-full bg-amber-600 transition-all duration-1000" style="height: 14.28%;"></div>
+    <!-- Interactive Chapter Indicator Sidebar -->
+    <div class="hidden md:flex absolute left-8 lg:left-12 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-3">
+        <div id="chapter-nav-list" class="flex flex-col items-center gap-1.5">
+            <button data-chapter="1" class="chapter-nav-btn text-xs font-display text-amber-500 font-bold tracking-wider hover:text-amber-300 transition-all cursor-pointer p-1 scale-110" title="Chapter 1 (Press 1)">01</button>
+            <button data-chapter="2" class="chapter-nav-btn text-xs font-display text-stone-600 hover:text-stone-300 transition-all cursor-pointer p-1" title="Chapter 2 (Press 2)">02</button>
+            <button data-chapter="3" class="chapter-nav-btn text-xs font-display text-stone-600 hover:text-stone-300 transition-all cursor-pointer p-1" title="Chapter 3 (Press 3)">03</button>
+            <button data-chapter="4" class="chapter-nav-btn text-xs font-display text-stone-600 hover:text-stone-300 transition-all cursor-pointer p-1" title="Chapter 4 (Press 4)">04</button>
+            <button data-chapter="5" class="chapter-nav-btn text-xs font-display text-stone-600 hover:text-stone-300 transition-all cursor-pointer p-1" title="Chapter 5 (Press 5)">05</button>
+            <button data-chapter="6" class="chapter-nav-btn text-xs font-display text-stone-600 hover:text-stone-300 transition-all cursor-pointer p-1" title="Chapter 6 (Press 6)">06</button>
+            <button data-chapter="7" class="chapter-nav-btn text-xs font-display text-stone-600 hover:text-stone-300 transition-all cursor-pointer p-1" title="Chapter 7 (Press 7)">07</button>
         </div>
-        <span class="text-stone-600 font-sans text-xs">07</span> 
+        <div class="w-[1px] h-16 bg-stone-800 relative my-1">
+            <div id="progress-bar" class="absolute top-0 left-0 w-full bg-amber-600 transition-all duration-500" style="height: 14.28%;"></div>
+        </div>
     </div>
 
     <!-- MAIN SLIDES CONTAINER -->
     <main class="slide-container" id="slides-wrapper">
         
-        <!-- SLIDE 01 : Warm Desert Amber -->
+        <!-- SLIDE 01 : Chapter I -->
         <section class="slide active px-8 md:pl-32 md:pr-12">
             <div class="max-w-4xl w-full mx-auto md:mx-0 pt-16 md:pt-0">
                 <p class="text-[9px] md:text-[10px] text-amber-700/80 uppercase tracking-[0.3em] mb-4 md:mb-6">Chapter I : The Origin</p>
@@ -252,7 +314,7 @@
             </div>
         </section>
 
-        <!-- SLIDE 02 : Deep Bronze / Ochre -->
+        <!-- SLIDE 02 : Chapter II -->
         <section class="slide px-8 md:pl-32 md:pr-12">
             <div class="max-w-4xl w-full mx-auto md:mx-0 pt-16 md:pt-0">
                 <p class="text-[9px] md:text-[10px] text-amber-600/80 uppercase tracking-[0.3em] mb-4 md:mb-6">Chapter II : The 360 Idols</p>
@@ -266,7 +328,7 @@
             </div>
         </section>
 
-        <!-- SLIDE 03 : Mystical Emerald / Deep Forest Subtle -->
+        <!-- SLIDE 03 : Chapter III -->
         <section class="slide px-8 md:pl-32 md:pr-12">
             <div class="max-w-5xl w-full mx-auto md:mx-0 pt-16 md:pt-0">
                 <p class="text-[9px] md:text-[10px] text-emerald-600/80 uppercase tracking-[0.3em] mb-4 md:mb-6">Chapter III : The Cleansing</p>
@@ -280,7 +342,7 @@
             </div>
         </section>
 
-        <!-- SLIDE 04 : Celestial Indigo / Midnight Blue -->
+        <!-- SLIDE 04 : Chapter IV -->
         <section class="slide px-8 md:pl-32 md:pr-12 flex flex-col md:flex-row justify-center md:justify-between items-center w-full gap-8 md:gap-0">
             <div class="max-w-2xl w-full mx-auto md:mx-0 text-center md:text-left pt-16 md:pt-0">
                 <p class="text-[9px] md:text-[10px] text-indigo-400/80 uppercase tracking-[0.3em] mb-4 md:mb-6">Chapter IV : The One Truth</p>
@@ -297,9 +359,12 @@
                 <p class="text-[10px] md:text-[11.5px] text-stone-500 tracking-[0.1em] mb-2 group-hover:text-indigo-400 transition-colors duration-700 text-center">
                     • QS. Ash-Shura (42):11
                 </p>
-                <h2 class="text-3xl sm:text-4xl md:text-5xl text-indigo-400 font-display mb-1 group-hover:text-indigo-300 transition-colors duration-700 drop-shadow-[0_0_15px_rgba(129,140,248,0.3)] text-center leading-loose" dir="rtl">
-                    <span id="arabic-verse" class="arabic-ink inline-block pt-4 md:pt-6 pb-2 px-2">
-                        لَيْسَ كَمِثْلِهِ شَيْءٌ
+                <h2 class="text-3xl sm:text-4xl md:text-5xl text-indigo-400 font-display mb-1 group-hover:text-indigo-300 transition-colors duration-700 text-center leading-relaxed" dir="rtl">
+                    <span class="arabic-ink-container py-2 px-4 inline-block">
+                        <span id="arabic-verse" class="arabic-ink inline-block whitespace-nowrap">
+                            لَيْسَ كَمِثْلِهِ شَيْءٌ
+                        </span>
+                        <span id="pen-nib" class="pen-nib"></span>
                     </span>
                 </h2>
                 <p class="text-[12px] md:text-[14px] text-stone-300 font-light italic mb-4 md:mb-5 text-center">"Laysa kamithlihi shay'un"</p>
@@ -315,7 +380,7 @@
             </aside>
         </section>
 
-        <!-- SLIDE 05 : Royal Gold & Teal -->
+        <!-- SLIDE 05 : Chapter V -->
         <section class="slide px-8 md:pl-32 md:pr-12 flex flex-col lg:flex-row justify-center lg:justify-between items-center w-full gap-8 lg:gap-0">
             <div class="max-w-xl w-full mx-auto lg:mx-0 text-center lg:text-left pt-16 lg:pt-0">
                 <p class="text-[9px] md:text-[10px] text-teal-600/80 uppercase tracking-[0.3em] mb-4 md:mb-6">Chapter V : The Golden Legacy</p>
@@ -324,22 +389,22 @@
                     To engineer is to <span class="text-teal-400/90 italic">understand the cosmos.</span>
                 </h1>
                 <p class="text-stone-500 font-light text-xs md:text-sm leading-relaxed mb-6">
-                    The drive to observe the universe birthed the Islamic Golden Age. Building beneficial technology is not merely a profession; it is an act of stewardship (Khalifah) and devotion. We engineer modern systems upon ancient foundations:
+                    The drive to observe the universe birthed the Islamic Golden Age. Building beneficial technology is not merely a profession; it is an act of stewardship (Khalifah) and devotion.
                 </p>
             </div>
             <div class="max-w-[450px] w-full flex flex-col gap-4 md:gap-5 lg:mr-12 opacity-95 text-left">
                 <div class="border-l-2 border-teal-900/40 pl-4 md:pl-5 hover:border-teal-500/80 transition-colors duration-500 group">
                     <h3 class="text-teal-500/90 font-display text-lg md:text-xl mb-1 group-hover:text-teal-300 transition-colors">Mathematics & Computing</h3>
-                    <p class="text-[10px] md:text-[11px] text-stone-400 font-light leading-relaxed">Al-Khawarizmi’s algorithms and the zero (0) numeral system laid the absolute foundations for modern programming.</p>
+                    <p class="text-[10px] md:text-[11px] text-stone-400 font-light leading-relaxed">Al-Khawarizmi’s algorithms and zero (0) laid foundations for modern programming.</p>
                 </div>
                 <div class="border-l-2 border-teal-900/40 pl-4 md:pl-5 hover:border-teal-500/80 transition-colors duration-500 group">
                     <h3 class="text-teal-500/90 font-display text-lg md:text-xl mb-1 group-hover:text-teal-300 transition-colors">Mechanics & Automata</h3>
-                    <p class="text-[10px] md:text-[11px] text-stone-400 font-light leading-relaxed">Al-Jazari’s hydraulic gears and early programmable robots engineered centuries before the industrial revolution.</p>
+                    <p class="text-[10px] md:text-[11px] text-stone-400 font-light leading-relaxed">Al-Jazari’s hydraulic gears and early programmable devices engineered centuries before industrial revolution.</p>
                 </div>
             </div>
         </section>
 
-        <!-- SLIDE 06 : Elegant Deep Maroon -->
+        <!-- SLIDE 06 : Chapter VI -->
         <section class="slide px-8 md:pl-32 md:pr-12">
             <div class="max-w-4xl w-full mx-auto md:mx-0 pt-16 md:pt-0">
                 <p class="text-[9px] md:text-[10px] text-rose-500/80 uppercase tracking-[0.3em] mb-4 md:mb-6">Chapter VI : The Illusion of Nostalgia</p>
@@ -350,19 +415,15 @@
                 <p class="mt-6 md:mt-8 text-stone-400 font-light text-sm md:text-base max-w-2xl leading-relaxed border-l-2 border-rose-900/60 pl-4 md:pl-6">
                     "Are we merely guarding the ashes of the Golden Age, or are we tending to its flame?"
                 </p>
-                <p class="mt-4 md:mt-6 text-stone-500 font-light text-xs md:text-sm max-w-xl leading-relaxed">
-                    History is not a museum; it is a blueprint. We are commanded to be critical thinkers (Ulul Albab). What is the purpose of inheriting the mathematics of Al-Khawarizmi if we do not author the next algorithms? Nostalgia without innovation is a betrayal of the intellect we were granted.
-                </p>
             </div>
         </section>
 
-        <!-- SLIDE 07 (CHAPTER VII) : Deep Void / Obsidian Cyan -->
+        <!-- SLIDE 07 : Chapter VII + Terminal Interface -->
         <section class="slide px-6 md:pl-32 md:pr-12 flex flex-col lg:flex-row justify-center lg:justify-between items-center w-full gap-8 lg:gap-12 relative">
             
-            <!-- CHAPTER 7 PAGE LOCK OVERLAY WITH RIDDLE -->
-            <div id="page7-lock-overlay" class="absolute inset-0 bg-[#060402]/98 z-50 flex flex-col items-center justify-center backdrop-blur-md transition-all duration-700 shadow-[0_0_50px_rgba(0,0,0,0.9)] px-4 md:px-6">
-                <div class="max-w-md w-full bg-[#0d0a07] border border-amber-900/60 rounded-xl p-6 md:p-8 shadow-[0_0_30px_rgba(217,119,6,0.15)] text-center relative">
-                    
+            <!-- RIDDLE OVERLAY FOR CHAPTER 7 -->
+            <div id="page7-lock-overlay" class="absolute inset-0 bg-[#040302]/92 z-50 flex flex-col items-center justify-center transition-all duration-700 shadow-[0_0_50px_rgba(0,0,0,0.95)] px-4 md:px-6" style="backdrop-filter: blur(45px); -webkit-backdrop-filter: blur(45px);">
+                <div class="max-w-md w-full bg-[#0d0a07]/90 border border-amber-900/60 rounded-xl p-6 md:p-8 shadow-[0_0_30px_rgba(217,119,6,0.2)] text-center relative backdrop-blur-md">
                     <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-amber-950/80 border border-amber-700/60 flex items-center justify-center mx-auto mb-4 md:mb-5 shadow-[0_0_20px_rgba(217,119,6,0.3)]">
                         <svg id="page7-lock-svg" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-7 md:h-7 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -376,7 +437,7 @@
 
                     <div class="flex flex-col gap-3">
                         <input type="text" id="riddle-input" class="bg-black/60 border border-amber-900/50 rounded px-3 py-2 md:px-4 md:py-2.5 text-amber-400 font-mono text-sm text-center outline-none focus:border-amber-500 placeholder-amber-900/40" placeholder="Enter password / name..." autocomplete="off">
-                        <button id="riddle-submit-btn" class="bg-amber-800 hover:bg-amber-700 text-stone-100 font-sans text-[10px] md:text-xs uppercase tracking-[0.2em] py-2.5 md:py-3 rounded transition-colors shadow-md">
+                        <button id="riddle-submit-btn" class="bg-amber-800 hover:bg-amber-700 text-stone-100 font-sans text-[10px] md:text-xs uppercase tracking-[0.2em] py-2.5 md:py-3 rounded transition-colors shadow-md cursor-pointer">
                             Unlock Chapter VII
                         </button>
                     </div>
@@ -384,21 +445,20 @@
                 </div>
             </div>
 
-            <div class="max-w-xl w-full mx-auto lg:mx-0 text-center lg:text-left pt-12 md:pt-16 lg:pt-0 shrink-0">
+            <div id="ch7-content" class="max-w-xl w-full mx-auto lg:mx-0 text-center lg:text-left pt-12 md:pt-16 lg:pt-0 shrink-0 blur-2xl opacity-20 select-none pointer-events-none transition-all duration-1000">
                 <p class="text-[9px] md:text-[10px] text-cyan-500/80 uppercase tracking-[0.3em] mb-4 md:mb-6">Chapter VII : The Next Renaissance</p>
                 <h1 class="font-display font-normal text-3xl sm:text-4xl md:text-[4.5rem] lg:text-[5rem] leading-[1.2] md:leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
                     Do not just read the legacy.<br class="hidden lg:block"> 
                     <span class="text-cyan-400/90 italic block mt-1 lg:mt-0 lg:inline">Compile it. Execute it.</span>
                 </h1>
                 <p class="mt-4 md:mt-8 text-stone-500 font-light text-xs md:text-sm max-w-xl leading-relaxed mx-auto lg:mx-0">
-                    The next Bayt al-Hikmah will not be built of stone, but of scalable architectures, pure logic, and ethical systems. The tools have changed, but the mandate remains: Seek knowledge, build with purpose, and elevate humanity. 
+                    The next Bayt al-Hikmah will not be built of stone, but of scalable architectures, pure logic, and ethical systems. Seek knowledge, build with purpose, and elevate humanity.
                 </p>
             </div>
 
-            <!-- Terminal / CMD Interface with Secondary Lock (Centered Right & Resizable) -->
+            <!-- TERMINAL WINDOW -->
             <div id="draggable-terminal-wrapper" class="relative w-full max-w-full lg:max-w-[500px] h-[300px] md:h-[380px] z-30 cursor-default select-none lg:mr-12 shrink-0 mt-6 lg:mt-0">
                 
-                <!-- Terminal Inner Lock Overlay -->
                 <div id="terminal-lock-overlay" class="absolute inset-0 bg-[#030201]/90 border border-cyan-950/60 rounded-lg z-20 flex flex-col items-center justify-center backdrop-blur-md transition-all duration-700 cursor-pointer group shadow-[0_0_30px_rgba(0,0,0,0.9)]">
                     <div id="lock-icon-container" class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-cyan-950/60 border border-cyan-700/50 flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 group-hover:border-cyan-400 transition-all duration-500 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
                         <svg id="lock-svg" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-7 md:h-7 text-cyan-400 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -409,17 +469,14 @@
                     <p class="text-stone-500 font-sans text-[9px] md:text-[11px] tracking-wider">[ Click to unlock session ]</p>
                 </div>
 
-                <!-- Terminal Container -->
                 <div id="terminal-container" class="w-full h-full bg-[#030201] border border-cyan-950/60 rounded-lg shadow-[0_0_20px_rgba(0,0,0,0.8)] backdrop-blur-md flex flex-col font-mono text-[10px] md:text-xs lg:text-sm text-cyan-400/90 overflow-hidden relative opacity-90 hover:opacity-100 transition-opacity duration-500">
                     
-                    <!-- Terminal Header (Draggable Handle + Controls) -->
                     <div id="terminal-header" class="w-full bg-cyan-950/20 border-b border-cyan-900/40 p-2 flex items-center justify-between cursor-grab active:cursor-grabbing touch-none">
                         <span class="text-cyan-600/80 text-[9px] md:text-[10px] tracking-widest uppercase pointer-events-none">Al-Iksr OS</span>
                         <div class="flex items-center gap-2">
                             <button id="terminal-back-btn" class="text-[9px] md:text-[10px] text-cyan-400 bg-cyan-950/60 border border-cyan-800/40 px-1.5 py-0.5 rounded hover:bg-cyan-900/50 transition-colors uppercase tracking-wider cursor-pointer">
                                 [ Back ]
                             </button>
-                            <!-- Maximize / Minimize / Expand Controls -->
                             <div class="hidden md:flex items-center gap-1.5 ml-1">
                                 <button id="terminal-size-btn" class="w-4 h-4 rounded-full bg-cyan-900/40 border border-cyan-700/50 flex items-center justify-center text-[9px] text-cyan-300 hover:bg-cyan-700 hover:text-white transition-colors cursor-pointer" title="Maximize / Restore">
                                     +
@@ -429,8 +486,7 @@
                         </div>
                     </div>
 
-                    <!-- Terminal Body (Output) -->
-                    <div id="terminal-output" class="flex-1 p-3 md:p-4 overflow-y-auto space-y-1.5 custom-scrollbar pb-10">
+                    <div id="terminal-output" class="flex-1 p-3 md:p-4 overflow-y-auto space-y-1.5 custom-scrollbar pb-16 md:pb-20">
                         <div class="text-stone-500 mb-4 leading-relaxed">
                             System Initialized. Kernel v1.0.0<br>
                             Authentication successful. Welcome, Scholar.<br>
@@ -438,8 +494,7 @@
                         </div>
                     </div>
 
-                    <!-- Terminal Input -->
-                    <div class="absolute bottom-0 left-0 w-full p-2 md:p-4 pt-1 pb-2 md:pb-4 flex items-center gap-2 bg-[#030201]">
+                    <div class="absolute bottom-0 left-0 w-full p-2 md:p-4 pt-1 pb-2 md:pb-4 flex items-center gap-2 bg-[#030201] border-t border-cyan-950/40">
                         <span class="text-cyan-600">root@bayt:~$</span>
                         <input type="text" id="terminal-input" class="bg-transparent border-none outline-none flex-1 text-cyan-300 font-mono text-[10px] md:text-sm focus:ring-0 placeholder-cyan-900/40" placeholder="Enter command..." autocomplete="off" spellcheck="false">
                     </div>
@@ -460,14 +515,25 @@
         </span>
     </div>
 
-    <!-- Script -->
+    <!-- MAIN JAVASCRIPT LOGIC -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const slides = document.querySelectorAll('.slide');
-            const pageNum = document.getElementById('current-page-num');
+            const chapterBtns = document.querySelectorAll('.chapter-nav-btn');
             const progressBar = document.getElementById('progress-bar');
             const ambientGlow = document.getElementById('ambient-glow');
             
+            // Background ambient gradients for each chapter (01 - 07)
+            const glowStates = [
+                'radial-gradient(circle, rgba(180, 83, 9, 0.16) 0%, rgba(120, 53, 15, 0.05) 45%, transparent 70%)',
+                'radial-gradient(circle, rgba(180, 83, 9, 0.22) 0%, rgba(146, 64, 14, 0.08) 45%, transparent 70%)',
+                'radial-gradient(circle, rgba(16, 185, 129, 0.16) 0%, rgba(5, 150, 105, 0.05) 45%, transparent 70%)',
+                'radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(67, 56, 202, 0.06) 45%, transparent 70%)',
+                'radial-gradient(circle, rgba(20, 184, 166, 0.18) 0%, rgba(13, 148, 136, 0.06) 45%, transparent 70%)',
+                'radial-gradient(circle, rgba(244, 63, 94, 0.16) 0%, rgba(225, 29, 72, 0.05) 45%, transparent 70%)',
+                'radial-gradient(circle, rgba(6, 182, 212, 0.18) 0%, rgba(14, 116, 144, 0.06) 45%, transparent 70%)'
+            ];
+
             const splashScreen = document.getElementById('splash-screen');
             const audio = document.getElementById('bg-music');
             const audioToggle = document.getElementById('audio-toggle');
@@ -485,7 +551,136 @@
             const draggableTerminalWrapper = document.getElementById('draggable-terminal-wrapper');
             const terminalBackBtn = document.getElementById('terminal-back-btn');
             const terminalSizeBtn = document.getElementById('terminal-size-btn');
-            
+
+            let isAudioPlaying = false;
+            let audioCtx = null;
+            let synthOsc = null;
+            let synthGain = null;
+
+            // Arabic Verse Calligraphy Reveal Animation (Right to Left with Pen Nib)
+            const penNib = document.getElementById('pen-nib');
+            let arabicAnimTimer = null;
+
+            function resetArabicAnimation() {
+                if (!arabicVerse) return;
+                if (arabicAnimTimer) clearTimeout(arabicAnimTimer);
+
+                // Matikan transisi sementara agar reset posisi terjadi secara instan (0ms)
+                arabicVerse.style.transition = 'none';
+                if (penNib) penNib.style.transition = 'none';
+
+                arabicVerse.classList.remove('reveal');
+                if (penNib) {
+                    penNib.classList.remove('writing');
+                    penNib.style.opacity = '0';
+                    penNib.style.left = '100%';
+                }
+
+                void arabicVerse.offsetWidth; // Force reflow browser
+            }
+
+            function triggerArabicAnimation() {
+                if (!arabicVerse) return;
+
+                // Reset keadaan awal
+                resetArabicAnimation();
+
+                // Jalankan kembali animasi setelah slide Chapter IV mulai muncul
+                arabicAnimTimer = setTimeout(() => {
+                    arabicVerse.style.transition = '';
+                    if (penNib) penNib.style.transition = '';
+
+                    arabicVerse.classList.add('reveal');
+                    if (penNib) {
+                        penNib.classList.add('writing');
+                        penNib.style.opacity = '1';
+                        penNib.style.left = '0%';
+                        setTimeout(() => {
+                            if (penNib) penNib.style.opacity = '0';
+                        }, 3500); // Fade out pena setelah selesai menulis
+                    }
+                }, 400);
+            }
+
+            // Web Audio API Ambient Pad Generator (Fallback)
+            function startSynthAmbient() {
+                try {
+                    if (!audioCtx) {
+                        const AudioContext = window.AudioContext || window.webkitAudioContext;
+                        audioCtx = new AudioContext();
+                    }
+                    if (audioCtx.state === 'suspended') {
+                        audioCtx.resume();
+                    }
+                    if (!synthOsc) {
+                        synthOsc = audioCtx.createOscillator();
+                        synthGain = audioCtx.createGain();
+                        
+                        synthOsc.type = 'sine';
+                        synthOsc.frequency.setValueAtTime(110, audioCtx.currentTime); // Low A note
+                        
+                        synthGain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+                        synthGain.gain.exponentialRampToValueAtTime(0.08, audioCtx.currentTime + 3);
+                        
+                        synthOsc.connect(synthGain);
+                        synthGain.connect(audioCtx.destination);
+                        synthOsc.start();
+                    }
+                } catch(e) {
+                    console.log("Audio Context initialization deferred");
+                }
+            }
+
+            function stopSynthAmbient() {
+                if (synthGain && audioCtx) {
+                    synthGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1);
+                    setTimeout(() => {
+                        if (synthOsc) {
+                            synthOsc.stop();
+                            synthOsc.disconnect();
+                            synthOsc = null;
+                        }
+                    }, 1000);
+                }
+            }
+
+            function toggleAudioState() {
+                if (isAudioPlaying) {
+                    audio.pause();
+                    stopSynthAmbient();
+                    isAudioPlaying = false;
+                    audioText.innerText = '[ Sound : Off ]';
+                    bar1.classList.remove('animate-electric-1');
+                    bar2.classList.remove('animate-electric-2');
+                    bar3.classList.remove('animate-electric-3');
+                } else {
+                    audio.play().then(() => {
+                        isAudioPlaying = true;
+                    }).catch(() => {
+                        startSynthAmbient();
+                        isAudioPlaying = true;
+                    });
+                    audioText.innerText = '[ Sound : On ]';
+                    bar1.classList.add('animate-electric-1');
+                    bar2.classList.add('animate-electric-2');
+                    bar3.classList.add('animate-electric-3');
+                }
+            }
+
+            // Splash Screen Click Event
+            if (splashScreen) {
+                splashScreen.addEventListener('click', () => {
+                    splashScreen.style.opacity = '0';
+                    splashScreen.style.visibility = 'hidden';
+                    toggleAudioState(); // Autoplay atmospheric sound upon user tap
+                });
+            }
+
+            audioToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleAudioState();
+            });
+
             // Draggable Terminal Logic
             let isDragging = false;
             let startX, startY;
@@ -493,28 +688,50 @@
             let currentY = 0;
             let isMaximized = false;
 
-            terminalHeader.addEventListener('mousedown', (e) => {
-                if (isMaximized) return; // Do not drag when maximized
+            const handleDragStart = (clientX, clientY) => {
+                if (isMaximized) return;
                 isDragging = true;
-                startX = e.clientX - currentX;
-                startY = e.clientY - currentY;
+                startX = clientX - currentX;
+                startY = clientY - currentY;
                 terminalHeader.style.cursor = 'grabbing';
+            };
+
+            const handleDragMove = (clientX, clientY) => {
+                if (!isDragging || isMaximized) return;
+                currentX = clientX - startX;
+                currentY = clientY - startY;
+                draggableTerminalWrapper.style.transform = `translate(${currentX}px, ${currentY}px)`;
+            };
+
+            const handleDragEnd = () => {
+                isDragging = false;
+                terminalHeader.style.cursor = 'grab';
+            };
+
+            terminalHeader.addEventListener('mousedown', (e) => {
+                handleDragStart(e.clientX, e.clientY);
                 e.preventDefault();
             });
 
-            window.addEventListener('mousemove', (e) => {
-                if (!isDragging || isMaximized) return;
-                currentX = e.clientX - startX;
-                currentY = e.clientY - startY;
-                draggableTerminalWrapper.style.transform = `translate(${currentX}px, ${currentY}px)`;
-            });
+            window.addEventListener('mousemove', (e) => handleDragMove(e.clientX, e.clientY));
+            window.addEventListener('mouseup', handleDragEnd);
 
-            window.addEventListener('mouseup', () => {
-                isDragging = false;
-                terminalHeader.style.cursor = 'grab';
-            });
+            // Touch Dragging Support
+            terminalHeader.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) {
+                    handleDragStart(e.touches[0].clientX, e.touches[0].clientY);
+                }
+            }, { passive: true });
 
-            // Maximize / Minimize toggle
+            window.addEventListener('touchmove', (e) => {
+                if (isDragging && e.touches.length === 1) {
+                    handleDragMove(e.touches[0].clientX, e.touches[0].clientY);
+                }
+            }, { passive: true });
+
+            window.addEventListener('touchend', handleDragEnd);
+
+            // Maximize / Restore Toggle
             terminalSizeBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 isMaximized = !isMaximized;
@@ -528,7 +745,6 @@
                     draggableTerminalWrapper.style.height = '80vh';
                     draggableTerminalWrapper.style.maxWidth = 'none';
                     terminalSizeBtn.innerText = '-';
-                    terminalSizeBtn.title = 'Restore Size';
                 } else {
                     draggableTerminalWrapper.style.position = 'relative';
                     draggableTerminalWrapper.style.top = 'auto';
@@ -538,11 +754,10 @@
                     draggableTerminalWrapper.style.maxWidth = '500px';
                     draggableTerminalWrapper.style.height = '380px';
                     terminalSizeBtn.innerText = '+';
-                    terminalSizeBtn.title = 'Maximize';
                 }
             });
 
-            // Riddle & Lock elements
+            // Lock & Riddle elements
             const page7LockOverlay = document.getElementById('page7-lock-overlay');
             const page7LockSvg = document.getElementById('page7-lock-svg');
             const riddleInput = document.getElementById('riddle-input');
@@ -557,88 +772,21 @@
 
             let currentSlideIndex = 0;
             let isAnimating = false;
-            let isPlaying = false;
-            let arabicAnimationTimeout;
-            
-            // Refined distinct elegant ambient background glows for Chapters 1-7
-            const glowStates = [
-                /* Ch 1: Warm Desert Amber */
-                'radial-gradient(circle, rgba(180, 83, 9, 0.16) 0%, rgba(120, 53, 15, 0.05) 45%, transparent 70%)',
-                /* Ch 2: Deep Bronze / Ochre */
-                'radial-gradient(circle, rgba(202, 138, 4, 0.15) 0%, rgba(113, 63, 18, 0.04) 45%, transparent 70%)',
-                /* Ch 3: Mystical Forest / Emerald subtle */
-                'radial-gradient(circle, rgba(16, 126, 88, 0.16) 0%, rgba(6, 78, 59, 0.05) 45%, transparent 70%)',
-                /* Ch 4: Celestial Indigo */
-                'radial-gradient(circle, rgba(79, 70, 229, 0.18) 0%, rgba(49, 46, 129, 0.06) 45%, transparent 70%)',
-                /* Ch 5: Royal Teal & Gold */
-                'radial-gradient(circle, rgba(13, 148, 136, 0.16) 0%, rgba(19, 78, 74, 0.05) 45%, transparent 70%)',
-                /* Ch 6: Elegant Deep Maroon (Requested) */
-                'radial-gradient(circle, rgba(159, 18, 57, 0.22) 0%, rgba(136, 19, 55, 0.08) 50%, transparent 75%)',
-                /* Ch 7: Deep Obsidian Cyan / Void */
-                'radial-gradient(circle, rgba(8, 145, 178, 0.18) 0%, rgba(21, 94, 117, 0.06) 45%, transparent 70%)'
-            ];
+            let animationTimeout = null;
+            let wheelCooloff = false;
 
-            // Auto Play Splash
-            splashScreen.addEventListener('click', () => {
-                splashScreen.style.opacity = '0';
-                setTimeout(() => splashScreen.style.visibility = 'hidden', 1000);
-                
-                audio.volume = 0.6;
-                audio.play().then(() => {
-                    isPlaying = true;
-                }).catch(e => {
-                    console.error("Audio playback failed:", e);
-                    audioText.innerText = '[ Audio Failed ]';
-                    toggleAudioVisuals(false);
-                });
-            });
-
-            // Audio Controls
-            function toggleAudioVisuals(active) {
-                if(active) {
-                    audioText.innerText = '[ Sound : On ]';
-                    audioToggle.classList.replace('text-amber-700/50', 'text-amber-500');
-                    bar1.classList.add('animate-electric-1', 'bg-amber-400');
-                    bar2.classList.add('animate-electric-2', 'bg-amber-400');
-                    bar3.classList.add('animate-electric-3', 'bg-amber-400');
-                } else {
-                    audioText.innerText = '[ Sound : Off ]';
-                    audioToggle.classList.replace('text-amber-500', 'text-amber-700/50');
-                    bar1.classList.remove('animate-electric-1', 'bg-amber-400');
-                    bar2.classList.remove('animate-electric-2', 'bg-amber-400');
-                    bar3.classList.remove('animate-electric-3', 'bg-amber-400');
-                }
-            }
-
-            audioToggle.addEventListener('click', () => {
-                if (isPlaying) {
-                    audio.pause();
-                    isPlaying = false;
-                    toggleAudioVisuals(false);
-                } else {
-                    audio.play();
-                    isPlaying = true;
-                    toggleAudioVisuals(true);
-                }
-            });
-
-            function triggerArabicAnimation() {
-                clearTimeout(arabicAnimationTimeout);
-                arabicVerse.classList.remove('reveal');
-                arabicAnimationTimeout = setTimeout(() => {
-                    arabicVerse.classList.add('reveal');
-                }, 800);
-            }
-
-            // Scroll Logic
-            function updateSlide(newIndex, direction) {
+            // Smooth Slide Navigation Logic
+            function updateSlide(newIndex, direction, force = false) {
+                if (newIndex === currentSlideIndex && !force) return;
+                if (newIndex < 0 || newIndex >= slides.length) return;
                 if (currentSlideIndex === 6 && direction === 'up' && !isPage7Unlocked) {
                     return; 
                 }
 
-                if (isAnimating || newIndex < 0 || newIndex >= slides.length) return;
-                
+                if (isAnimating && !force) return;
                 isAnimating = true;
+
+                if (animationTimeout) clearTimeout(animationTimeout);
 
                 const currentSlide = slides[currentSlideIndex];
                 currentSlide.classList.remove('active');
@@ -650,60 +798,79 @@
                 nextSlide.classList.add('active');
                 
                 currentSlideIndex = newIndex;
-                pageNum.innerText = `0${currentSlideIndex + 1}`;
+                
+                chapterBtns.forEach((btn, idx) => {
+                    if (idx === currentSlideIndex) {
+                        btn.className = "chapter-nav-btn text-xs font-display text-amber-500 font-bold tracking-wider hover:text-amber-300 transition-all cursor-pointer p-1 scale-110";
+                    } else {
+                        btn.className = "chapter-nav-btn text-xs font-display text-stone-600 hover:text-stone-300 transition-all cursor-pointer p-1";
+                    }
+                });
+
                 progressBar.style.height = `${((currentSlideIndex + 1) / slides.length) * 100}%`;
                 ambientGlow.style.background = glowStates[currentSlideIndex];
 
-                if(currentSlideIndex === 3) {
+                if (currentSlideIndex === 3) {
                     triggerArabicAnimation();
-                }
-                
-                if(currentSlideIndex === 6) {
-                    isPage7Unlocked = false;
-                    isTerminalUnlocked = false;
-                    isMaximized = false;
-                    currentX = 0;
-                    currentY = 0;
-                    draggableTerminalWrapper.style.position = 'relative';
-                    draggableTerminalWrapper.style.top = 'auto';
-                    draggableTerminalWrapper.style.left = 'auto';
-                    draggableTerminalWrapper.style.transform = `translate(0px, 0px)`;
-                    draggableTerminalWrapper.style.width = '100%';
-                    draggableTerminalWrapper.style.maxWidth = '500px';
-                    draggableTerminalWrapper.style.height = '380px';
-                    terminalSizeBtn.innerText = '+';
-                    
-                    page7LockOverlay.style.opacity = '1';
-                    page7LockOverlay.style.visibility = 'visible';
-                    riddleInput.value = '';
-                    riddleError.classList.add('hidden');
-                    page7LockSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />';
-
-                    terminalLockOverlay.style.opacity = '1';
-                    terminalLockOverlay.style.visibility = 'visible';
-                    lockSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />';
-                    terminalInput.blur();
                 } else {
-                    terminalInput.blur();
+                    resetArabicAnimation();
                 }
 
-                setTimeout(() => {
+                animationTimeout = setTimeout(() => {
                     isAnimating = false;
-                    currentSlide.classList.remove('exit-up', 'exit-down');
                 }, 1200);
             }
 
-            window.addEventListener('wheel', (e) => {
-                if (currentSlideIndex === 6 && !isPage7Unlocked) {
-                    return; 
-                }
-                if (currentSlideIndex === 6 && terminalContainer.contains(e.target)) {
-                    return; 
-                }
-                if (e.deltaY > 20) updateSlide(currentSlideIndex + 1, 'down');
-                else if (e.deltaY < -20) updateSlide(currentSlideIndex - 1, 'up');
+            // Click Navigation for Chapter Numbers (01 - 07)
+            chapterBtns.forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const targetIndex = parseInt(btn.dataset.chapter) - 1;
+                    if (targetIndex !== currentSlideIndex) {
+                        const dir = targetIndex > currentSlideIndex ? 'down' : 'up';
+                        updateSlide(targetIndex, dir, true);
+                    }
+                });
             });
 
+            // Keyboard Navigation (Arrow keys & Direct Numbers 1-7)
+            window.addEventListener('keydown', (e) => {
+                const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+                if (activeTag === 'input' || activeTag === 'textarea') return;
+
+                if (e.key >= '1' && e.key <= '7') {
+                    const targetIndex = parseInt(e.key) - 1;
+                    if (targetIndex !== currentSlideIndex) {
+                        const dir = targetIndex > currentSlideIndex ? 'down' : 'up';
+                        updateSlide(targetIndex, dir, true);
+                    }
+                    return;
+                }
+
+                if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+                    e.preventDefault();
+                    updateSlide(currentSlideIndex + 1, 'down');
+                } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                    e.preventDefault();
+                    updateSlide(currentSlideIndex - 1, 'up');
+                }
+            });
+
+            // Scroll Wheel Event Handler
+            window.addEventListener('wheel', (e) => {
+                if (wheelCooloff) return;
+                if (currentSlideIndex === 6 && !isPage7Unlocked) return;
+                if (currentSlideIndex === 6 && terminalContainer.contains(e.target)) return;
+                
+                if (Math.abs(e.deltaY) > 15) {
+                    wheelCooloff = true;
+                    if (e.deltaY > 0) updateSlide(currentSlideIndex + 1, 'down');
+                    else if (e.deltaY < 0) updateSlide(currentSlideIndex - 1, 'up');
+                    setTimeout(() => { wheelCooloff = false; }, 500);
+                }
+            }, { passive: true });
+
+            // Touch Swipe Support
             let touchStartY = 0;
             window.addEventListener('touchstart', e => {
                 if (currentSlideIndex === 6 && !isPage7Unlocked) return;
@@ -718,16 +885,24 @@
                 if (touchEndY - touchStartY > 50) updateSlide(currentSlideIndex - 1, 'up');
             });
 
-            // Handle Riddle Verification for Chapter 7
+            // Riddle Check
             function checkRiddle() {
                 const val = riddleInput.value.trim().toLowerCase();
                 if (val === 'muhammad') {
                     isPage7Unlocked = true;
+                    
+                    const ch7Content = document.getElementById('ch7-content');
+                    if (ch7Content) {
+                        ch7Content.classList.remove('blur-2xl', 'opacity-20', 'select-none', 'pointer-events-none');
+                        ch7Content.classList.add('blur-0', 'opacity-100');
+                    }
+
                     page7LockSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />';
+                    page7LockOverlay.style.transform = 'scale(1.05)';
+                    page7LockOverlay.style.opacity = '0';
                     setTimeout(() => {
-                        page7LockOverlay.style.opacity = '0';
                         page7LockOverlay.style.visibility = 'hidden';
-                    }, 400);
+                    }, 600);
                 } else {
                     riddleError.classList.remove('hidden');
                     riddleInput.classList.add('border-red-500');
@@ -737,17 +912,14 @@
 
             riddleSubmitBtn.addEventListener('click', checkRiddle);
             riddleInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    checkRiddle();
-                }
+                if (e.key === 'Enter') checkRiddle();
             });
 
-            // Unlock Terminal Interaction
+            // Terminal Unlock
             terminalLockOverlay.addEventListener('click', (e) => {
                 e.stopPropagation();
                 isTerminalUnlocked = true;
                 lockSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />';
-                
                 setTimeout(() => {
                     terminalLockOverlay.style.opacity = '0';
                     terminalLockOverlay.style.visibility = 'hidden';
@@ -755,185 +927,188 @@
                 }, 350);
             });
 
-            // --- TERMINAL COMMANDS ---
+            // Terminal Commands Engine
             terminalContainer.addEventListener('click', () => {
-                if (isTerminalUnlocked) {
-                    terminalInput.focus();
-                }
+                if (isTerminalUnlocked) terminalInput.focus();
             });
+
+            const commandHistory = [];
+            let historyIndex = -1;
 
             const terminalCommands = {
                 'help': `AVAILABLE COMMANDS:<br>
-                         <span class="text-cyan-300">help</span>    - Show this manual<br>
+                         <span class="text-cyan-300">help</span>    - Show manual<br>
                          <span class="text-cyan-300">status</span>  - Check system integrity<br>
-                         <span class="text-cyan-300">iceberg</span> - View taxonomy index<br>
-                         <span class="text-cyan-300">layer [1-8]</span> - Access specific depth (e.g., 'layer 1')<br>
-                         <span class="text-cyan-300">[item name]</span> - Type any item from iceberg to get details (e.g., 'five pillars', 'sirah nabawiyyah')<br>
-                         <span class="text-cyan-300">back</span>    - Return to main menu / summary<br>
-                         <span class="text-cyan-300">clear</span>   - Clear the terminal screen`,
+                         <span class="text-cyan-300">iceberg</span> - View Islamic Iceberg Taxonomy<br>
+                         <span class="text-cyan-300">layer [1-8]</span> - Access specific layer (e.g., 'layer 1')<br>
+                         <span class="text-cyan-300">[item name]</span> - Type any taxonomy term for details<br>
+                         <span class="text-cyan-300">back</span>    - Return to main view<br>
+                         <span class="text-cyan-300">clear</span>   - Clear terminal output`,
                 
-                'status': `<span class="text-green-500">System optimal.</span> Logic gates: stable. Taxonomy DB loaded.`,
-                
-                'clear': 'CLEAR_FLAG',
-
+                'status': `<span class="text-green-500">System optimal.</span> Logic gates: stable. Taxonomy DB synchronized with Iceberg chart.`,
+                'clear': `CLEAR_FLAG`,
                 'back': `Returned to main navigation view.<br>Type <span class="text-cyan-300">iceberg</span> to view taxonomy levels or <span class="text-cyan-300">help</span> for options.`,
 
-                'iceberg': `THE ISLAMIC ICEBERG: A COMPREHENSIVE TAXONOMY<br>
-                            <span class="text-stone-600">-------------------------------------------</span><br>
-                            <span class="text-blue-300/80 text-[10px] tracking-widest">THE SURFACE</span><br>
-                            > <span class="text-cyan-400">layer 1</span> : General & Practical Tiers<br>
-                            <span class="text-blue-500/80 text-[10px] tracking-widest mt-1 block">DEEP SEA</span><br>
-                            > <span class="text-cyan-400">layer 2</span> : Shallow Waters - Theological Dynamics<br>
-                            > <span class="text-cyan-400">layer 3</span> : Complex History & Philosophy<br>
-                            > <span class="text-cyan-400">layer 4</span> : Ocean Floor & Esotericism<br>
-                            <span class="text-indigo-400/80 text-[10px] tracking-widest mt-1 block">DEEPEST LAYERS</span><br>
-                            > <span class="text-cyan-400">layer 5</span> : Abyssal Zone<br>
-                            > <span class="text-cyan-400">layer 6</span> : Oceanic Crust Floor<br>
-                            > <span class="text-cyan-400">layer 7</span> : Alam Al-Ghayb & Cosmology<br>
-                            > <span class="text-cyan-400">layer 8</span> : Al-'Amah & Dzat Mutlaq (The Void)`,
+                'iceberg': `THE ISLAMIC ICEBERG: A COMPREHENSIVE TAXONOMY OF THOUGHT, THEOLOGY, & METAPHYSICS<br>
+                            <span class="text-stone-600">---------------------------------------------------------</span><br>
+                            > <span class="text-cyan-400">layer 1</span> : Surface - General & Practical Tiers<br>
+                            > <span class="text-cyan-400">layer 2</span> : Shallow Waters - Theological Dynamics & Methodology<br>
+                            > <span class="text-cyan-400">layer 3</span> : Deep Sea - Complex History & Philosophy<br>
+                            > <span class="text-cyan-400">layer 4</span> : Deep Sea - Ocean Floor & Esotericism<br>
+                            > <span class="text-cyan-400">layer 5</span> : Deepest Layers - Abyssal Zone<br>
+                            > <span class="text-cyan-400">layer 6</span> : Deepest Layers - Oceanic Crust Floor<br>
+                            > <span class="text-cyan-400">layer 7</span> : Deepest Layers - Alam Al-Ghayb & Esoteric Cosmology<br>
+                            > <span class="text-cyan-400">layer 8</span> : Deepest Layers - Al-'Amah & Dzat Mutlaq (The Void)<br>
+                            > <span class="text-cyan-400">limits</span>  - Hadd al-'Aql & Bahrun Bila Syati`,
 
-                'layer 1': `<span class="text-cyan-300 font-bold">[LAYER 1: GENERAL & PRACTICAL TIERS]</span><br>
-                            <span class="text-stone-500 text-[10px] uppercase tracking-widest border-b border-stone-800 mb-1 inline-block">Depth: The Surface</span><br>
-                            <span class="text-stone-300">
-                            > <span class="text-cyan-200">Five Pillars</span><br>
-                            > <span class="text-cyan-200">Four Juristic Schools</span> (Madhhabs)<br>
-                            > <span class="text-cyan-200">Sirah Nabawiyyah</span> (type to inspect)</span>`,
+                // --- LAYER 1 ---
+                'layer 1': `<span class="text-cyan-300 font-bold">[LAYER 1: GENERAL & PRACTICAL TIERS (THE SURFACE)]</span><br>
+                            > <span class="text-cyan-200">five pillars</span> - Arkan al-Islam<br>
+                            > <span class="text-cyan-200">four juristic schools</span> - Hanafi, Maliki, Shafi'i, Hanbali Madhhabs<br>
+                            > <span class="text-cyan-200">sirah nabawiyyah</span> - Prophetic History & Biography`,
 
-                'layer 2': `<span class="text-cyan-300 font-bold">[LAYER 2: SHALLOW WATERS]</span><br>
-                            <span class="text-stone-500 text-[10px] uppercase tracking-widest border-b border-stone-800 mb-1 inline-block">Depth: Deep Sea / Theological Dynamics</span><br>
-                            <span class="text-stone-300">
-                            > <span class="text-cyan-200">Ilm al-Kalam</span><br>
-                            > <span class="text-cyan-200">Hadith Sciences</span> & Al-'Illal<br>
-                            > <span class="text-cyan-200">Quranic Qira'at</span></span>`,
+                'five pillars': `<span class="text-cyan-300 font-bold">[FIVE PILLARS OF ISLAM]</span><br>
+                                 <span class="text-stone-300">Shahada (Faith), Salah (Prayer), Zakat (Alms), Sawm (Fasting), Hajj (Pilgrimage). The foundational outward framework of Islamic practice.</span>`,
 
-                'layer 3': `<span class="text-cyan-300 font-bold">[LAYER 3: COMPLEX HISTORY & PHILOSOPHY]</span><br>
-                            <span class="text-stone-500 text-[10px] uppercase tracking-widest border-b border-stone-800 mb-1 inline-block">Depth: Deep Sea</span><br>
-                            <span class="text-stone-300">
-                            > <span class="text-cyan-200">Avicenna & Averroes</span><br>
-                            > <span class="text-cyan-200">Fitnah Kubra</span> (battle lines, broken connections)<br>
-                            > <span class="text-cyan-200">Sufi Shatahat</span></span>`,
+                'four juristic schools': `<span class="text-cyan-300 font-bold">[FOUR JURISTIC SCHOOLS (MADHHABS)]</span><br>
+                                         <span class="text-stone-300">Hanafi (Rationalist/Ra'y focus), Maliki (Medinan tradition), Shafi'i (Systematic Usul Synthesis), Hanbali (Textualist/Hadith focus).</span>`,
 
-                'layer 4': `<span class="text-cyan-300 font-bold">[LAYER 4: OCEAN FLOOR & ESOTERICISM]</span><br>
-                            <span class="text-stone-500 text-[10px] uppercase tracking-widest border-b border-stone-800 mb-1 inline-block">Depth: Deep Sea</span><br>
-                            <span class="text-stone-300">
-                            > <span class="text-cyan-200">Hurufiyyah</span> (letters and numbers)<br>
-                            > <span class="text-cyan-200">Alchemy</span> (Lab equipment formula ibn hayyan)<br>
-                            > <span class="text-cyan-200">Ancient Manuscripts</span></span>`,
+                'madhhabs': `<span class="text-cyan-300 font-bold">[FOUR JURISTIC SCHOOLS (MADHHABS)]</span><br>
+                             <span class="text-stone-300">Hanafi, Maliki, Shafi'i, and Hanbali legal traditions structuring jurisprudence across the Muslim world.</span>`,
 
-                'layer 5': `<span class="text-cyan-300 font-bold">[LAYER 5: ABYSSAL ZONE]</span><br>
-                            <span class="text-stone-500 text-[10px] uppercase tracking-widest border-b border-stone-800 mb-1 inline-block">Depth: Deepest Layers</span><br>
-                            <span class="text-stone-300">
-                            > <span class="text-cyan-200">Contemporary Textual Critique</span><br>
-                            > <span class="text-cyan-200">Tripartite Reason</span><br>
-                            > <span class="text-cyan-200">Illuminationism</span></span>`,
+                'sirah nabawiyyah': `<span class="text-cyan-300 font-bold">[SIRAH NABAWIYYAH]</span><br>
+                                     <span class="text-stone-300">Historical biography of Prophet Muhammad SAW, detailing his mission from 7th-century Arabia to establishing universal ethical governance.</span>`,
 
-                'layer 6': `<span class="text-cyan-300 font-bold">[LAYER 6: OCEANIC CRUST FLOOR]</span><br>
-                            <span class="text-stone-500 text-[10px] uppercase tracking-widest border-b border-stone-800 mb-1 inline-block">Depth: Deepest Layers</span><br>
-                            <span class="text-stone-300">
-                            > <span class="text-cyan-200">Sirr al-Sirr</span> (Secret)<br>
-                            > <span class="text-cyan-200">Lost Manuscripts</span><br>
-                            > <span class="text-cyan-200">Paradox Jahl 'Arif</span></span>`,
+                // --- LAYER 2 ---
+                'layer 2': `<span class="text-cyan-300 font-bold">[LAYER 2: SHALLOW WATERS - THEOLOGICAL DYNAMICS & METHODOLOGY]</span><br>
+                            > <span class="text-cyan-200">ilm al-kalam</span> - Rational Theology & Dialectics<br>
+                            > <span class="text-cyan-200">hadith sciences</span> - Hadith Methodology & Al-'Illal (Hidden Defects)<br>
+                            > <span class="text-cyan-200">quranic qira'at</span> - Canonical Variant Recitations`,
 
+                'ilm al-kalam': `<span class="text-cyan-300 font-bold">[ILM AL-KALAM]</span><br>
+                                 <span class="text-stone-300">The science of rational theology and dialectical argumentation established to defend Islamic creed and analyze Divine attributes.</span>`,
+
+                'hadith sciences': `<span class="text-cyan-300 font-bold">[HADITH SCIENCES & AL-'ILLAL]</span><br>
+                                   <span class="text-stone-300">Rigorous critical methodology evaluating narrators (Jarh wa Ta'dil), chain of transmission (Isnad), and subtle hidden defects (Al-'Illal).</span>`,
+
+                'quranic qira\'at': `<span class="text-cyan-300 font-bold">[QURANIC QIRA'AT]</span><br>
+                                   <span class="text-stone-300">The canonical mutawatir modes of Quranic recitation, preserved through unbroken oral chains back to the Prophet.</span>`,
+
+                'qira\'at': `<span class="text-cyan-300 font-bold">[QURANIC QIRA'AT]</span><br>
+                           <span class="text-stone-300">Systematized variant recitations of the Quran (e.g., Hafs, Warsh, Qalun) reflecting linguistic richness and divine preservation.</span>`,
+
+                // --- LAYER 3 ---
+                'layer 3': `<span class="text-cyan-300 font-bold">[LAYER 3: DEEP SEA - COMPLEX HISTORY & PHILOSOPHY]</span><br>
+                            > <span class="text-cyan-200">avicenna & averroes</span> - Falsafa & Peripatetic Philosophy<br>
+                            > <span class="text-cyan-200">fitnah kubra</span> - The First Civil War & Broken Connections<br>
+                            > <span class="text-cyan-200">sufi shatahat</span> - Mystical Ecstatic Utterances`,
+
+                'avicenna & averroes': `<span class="text-cyan-300 font-bold">[AVICENNA & AVERROES (FALSAFA)]</span><br>
+                                        <span class="text-stone-300">Ibn Sina (Avicenna) and Ibn Rushd (Averroes), giants of Islamic philosophy who synthesized Aristotelian logic, medicine, and metaphysics.</span>`,
+
+                'falsafa': `<span class="text-cyan-300 font-bold">[FALSAFA]</span><br>
+                            <span class="text-stone-300">Islamic rational philosophical tradition blending Classical Greek philosophy with Islamic monotheistic metaphysics.</span>`,
+
+                'fitnah kubra': `<span class="text-cyan-300 font-bold">[FITNAH KUBRA]</span><br>
+                                 <span class="text-stone-300">The Great Schism / First Islamic Civil War; political fractures, historical battle lines, and early theological sect formation.</span>`,
+
+                'sufi shatahat': `<span class="text-cyan-300 font-bold">[SUFI SHATAHAT]</span><br>
+                                  <span class="text-stone-300">Paradoxical ecstatic utterances spoken by Sufis during intense states of spiritual intoxication (Fana), often misunderstood by outward jurists.</span>`,
+
+                // --- LAYER 4 ---
+                'layer 4': `<span class="text-cyan-300 font-bold">[LAYER 4: DEEP SEA - OCEAN FLOOR & ESOTERICISM]</span><br>
+                            > <span class="text-cyan-200">hurufiyyah</span> - Science of Letters & Numbers<br>
+                            > <span class="text-cyan-200">alchemy</span> - Chemical Equipment & Formulas of Jabir Ibn Hayyan<br>
+                            > <span class="text-cyan-200">ancient manuscripts</span> - Unstudied Historical Codices`,
+
+                'hurufiyyah': `<span class="text-cyan-300 font-bold">[HURUFIYYAH (LETTRISM)]</span><br>
+                               <span class="text-stone-300">The esoteric science examining spiritual codes, mathematical balances, and cosmic resonance within Arabic letters and Abjad numbers.</span>`,
+
+                'alchemy': `<span class="text-cyan-300 font-bold">[ALCHEMY (JABIR IBN HAYYAN)]</span><br>
+                            <span class="text-stone-300">Early proto-chemistry and laboratory methodology established by Jabir Ibn Hayyan (Geber), blending material science with spiritual transformation.</span>`,
+
+                'ancient manuscripts': `<span class="text-cyan-300 font-bold">[ANCIENT MANUSCRIPTS]</span><br>
+                                      <span class="text-stone-300">Rarity of classic handwritten scrolls, palimpsests, and historical treatises detailing medieval science, theology, and philosophy.</span>`,
+
+                // --- LAYER 5 ---
+                'layer 5': `<span class="text-cyan-300 font-bold">[LAYER 5: DEEPEST LAYERS - ABYSSAL ZONE]</span><br>
+                            > <span class="text-cyan-200">contemporary textual critique</span> - Modern Hermeneutics<br>
+                            > <span class="text-cyan-200">tripartite reason</span> - Epistemology of Revelation, Intellect & Intuition<br>
+                            > <span class="text-cyan-200">illuminationism</span> - Hikmat al-Ishraq (Philosophy of Light)`,
+
+                'contemporary textual critique': `<span class="text-cyan-300 font-bold">[CONTEMPORARY TEXTUAL CRITIQUE]</span><br>
+                                                <span class="text-stone-300">Modern historiographical analysis, structuralism, and critical textual methodologies applied to historical Islamic scholarship.</span>`,
+
+                'tripartite reason': `<span class="text-cyan-300 font-bold">[TRIPARTITE REASON]</span><br>
+                                     <span class="text-stone-300">Integrated epistemological triad balancing Naql (Revelation), 'Aql (Intellectual Reason), and Kashf (Spiritual Unveiling/Intuition).</span>`,
+
+                'illuminationism': `<span class="text-cyan-300 font-bold">[ILLUMINATIONISM (HIKMAT AL-ISHRAQ)]</span><br>
+                                   <span class="text-stone-300">Suhrawardi's philosophical framework viewing existence as gradations of Pure Divine Light (Nur) overcoming darkness (Zulmat).</span>`,
+
+                // --- LAYER 6 ---
+                'layer 6': `<span class="text-cyan-300 font-bold">[LAYER 6: DEEPEST LAYERS - OCEANIC CRUST FLOOR]</span><br>
+                            > <span class="text-cyan-200">sirr al-sirr</span> - Secret of Secrets<br>
+                            > <span class="text-cyan-200">lost manuscripts</span> - Submerged & Destroyed Heritage<br>
+                            > <span class="text-cyan-200">jahl arif</span> - Paradox of Learned Ignorance`,
+
+                'sirr al-sirr': `<span class="text-cyan-300 font-bold">[SIRR AL-SIRR (SECRET OF SECRETS)]</span><br>
+                                 <span class="text-stone-300">The deepest subtle spiritual realm within human consciousness where the creature perceives its uncreated reality in Divine Presence.</span>`,
+
+                'lost manuscripts': `<span class="text-cyan-300 font-bold">[LOST MANUSCRIPTS]</span><br>
+                                     <span class="text-stone-300">Irreplaceable loss of thousands of scientific and theological texts lost in events like the Siege of Baghdad (1258) and library fires.</span>`,
+
+                'jahl arif': `<span class="text-cyan-300 font-bold">[PARADOX: JAHL 'ARIF]</span><br>
+                              <span class="text-stone-300">The paradox of the 'Ignorance of the Knower'; the realization that ultimate knowledge culminates in recognizing the limits of reason before Divine Mystery.</span>`,
+
+                'paradox jahl arif': `<span class="text-cyan-300 font-bold">[PARADOX: JAHL 'ARIF]</span><br>
+                                      <span class="text-stone-300">Acknowledging that true intellectual mastery leads to humble awe and awareness of ultimate unresolvable transcendence.</span>`,
+
+                // --- LAYER 7 ---
                 'layer 7': `<span class="text-cyan-300 font-bold">[LAYER 7: ALAM AL-GHAYB & ESOTERIC COSMOLOGY]</span><br>
-                            <span class="text-stone-500 text-[10px] uppercase tracking-widest border-b border-stone-800 mb-1 inline-block">Depth: Deepest Layers</span><br>
-                            <span class="text-stone-300">
-                            > <span class="text-cyan-200">Nur Muhammad</span><br>
-                            > <span class="text-cyan-200">Alam al-Mithal</span><br>
-                            > <span class="text-cyan-200">Hadd al-'Aql</span> (Limits of intellect)</span>`,
+                            > <span class="text-cyan-200">nur muhammad</span> - The Primordial Light<br>
+                            > <span class="text-cyan-200">alam al-mithal</span> - Realm of Images & Archetypes`,
 
+                'nur muhammad': `<span class="text-cyan-300 font-bold">[NUR MUHAMMAD (THE PRIMORDIAL LIGHT)]</span><br>
+                                 <span class="text-stone-300">The initial spiritual archetype and luminous spark created prior to the material universe, from which cosmic reality unfolds.</span>`,
+
+                'alam al-mithal': `<span class="text-cyan-300 font-bold">[ALAM AL-MITHAL (WORLD OF IMAGES)]</span><br>
+                                   <span class="text-stone-300">The ontologically real intermediate realm (Barzakh) between physical matter and pure intellect, where dreams and spiritual forms manifest.</span>`,
+
+                // --- LAYER 8 ---
                 'layer 8': `<span class="text-cyan-300 font-bold">[LAYER 8: AL-'AMAH & DZAT MUTLAQ (THE VOID)]</span><br>
-                            <span class="text-stone-500 text-[10px] uppercase tracking-widest border-b border-stone-800 mb-1 inline-block">Depth: Bahrun bila Syati (Endless Ocean)</span><br>
-                            <span class="text-stone-300">
-                            > <span class="text-cyan-200">Dzat Mutlaq</span> (Absolute Godhead)<br>
-                            > <span class="text-cyan-200">Al-'Amah</span><br>
-                            > <span class="text-cyan-200">As-Sukt</span> (Silence)</span>`,
+                            > <span class="text-cyan-200">dzat mutlaq</span> - Absolute Godhead<br>
+                            > <span class="text-cyan-200">al-amah</span> - The Primordial Unmanifest Cloud<br>
+                            > <span class="text-cyan-200">as-sukt</span> - Absolute Silence`,
 
-                'five pillars': `<span class="text-cyan-300 font-bold">[FIVE PILLARS] (Layer 1)</span><br>
-                                 <span class="text-stone-300">The foundational framework of practice (Shahada, Salah, Zakat, Sawm, Hajj). Acting as the visible baseline structure of faith.</span>`,
+                'dzat mutlaq': `<span class="text-cyan-300 font-bold">[DZAT MUTLAQ (ABSOLUTE GODHEAD)]</span><br>
+                                <span class="text-stone-300">The utterly unconditioned, transcendent Divine Essence beyond all attributes, human comprehension, or physical expression.</span>`,
 
-                'four juristic schools': `<span class="text-cyan-300 font-bold">[FOUR JURISTIC SCHOOLS / MADHHABS] (Layer 1)</span><br>
-                                          <span class="text-stone-300">Hanafi, Maliki, Shafi'i, and Hanbali schools of jurisprudence providing structural methodologies for Islamic law and daily societal engineering.</span>`,
-                
-                'madhhabs': `<span class="text-cyan-300 font-bold">[FOUR JURISTIC SCHOOLS / MADHHABS] (Layer 1)</span><br>
-                             <span class="text-stone-300">Hanafi, Maliki, Shafi'i, and Hanbali schools of jurisprudence providing structural methodologies for Islamic law and daily societal engineering.</span>`,
+                'al-amah': `<span class="text-cyan-300 font-bold">[AL-'AMAH (THE BLIND CLOUD)]</span><br>
+                            <span class="text-stone-300">The primordial state before creation referenced in Hadith traditions; the absolute void prior to the manifestation of space, time, or light.</span>`,
 
-                'sirah nabawiyyah': `<span class="text-cyan-300 font-bold">[SIRAH NABAWIYYAH] (Layer 1)</span><br>
-                                     <span class="text-stone-300">Historical Summary:<br>The biographical record and historical blueprint of Prophet Muhammad SAW's mission in guiding civilization from the age of ignorance (Jahiliyyah) toward the enlightenment of monotheism, establishing societal order in Medina, and serving as the supreme model of humanitarian ethics.</span>`,
+                'as-sukt': `<span class="text-cyan-300 font-bold">[AS-SUKT (SILENCE)]</span><br>
+                            <span class="text-stone-300">The final station where language, logic, and rational inquiry dissolve into complete spiritual silence before the Infinite.</span>`,
 
-                'ilm al-kalam': `<span class="text-cyan-300 font-bold">[ILM AL-KALAM] (Layer 2)</span><br>
-                                 <span class="text-stone-300">Islamic scholastic theology exploring articles of faith through dialectical reasoning, philosophical logic, and rational debate against external dogmas.</span>`,
+                // --- SPECIAL ANNOTATIONS ---
+                'limits': `<span class="text-cyan-300 font-bold">[LIMITS OF INTELLECT & THE ENDLESS OCEAN]</span><br>
+                           > <span class="text-cyan-200">hadd al-aql</span> - The Boundary of Intellect<br>
+                           > <span class="text-cyan-200">bahrun bila syati</span> - The Endless Ocean`,
 
-                'hadith sciences': `<span class="text-cyan-300 font-bold">[HADITH SCIENCES & AL-'ILLAL] (Layer 2)</span><br>
-                                    <span class="text-stone-300">Critical transmission critique (Isnad analysis) and subtle hidden flaws detection (Ilal) to verify historical authenticity of prophetic sayings.</span>`,
+                'hadd al-aql': `<span class="text-cyan-300 font-bold">[HADD AL-'AQL (LIMITS OF INTELLECT)]</span><br>
+                                <span class="text-stone-300">The epistemological frontier where human rational intellect reaches its max capacity and must surrender to divine revelation and mystery.</span>`,
 
-                'quranic qira\'at': `<span class="text-cyan-300 font-bold">[QURANIC QIRA'AT] (Layer 2)</span><br>
-                                    <span class="text-stone-300">The canonical variations of Quranic recitation tied to historical dialects and oral preservation frameworks.</span>`,
-
-                'avicenna & averroes': `<span class="text-cyan-300 font-bold">[AVICENNA & AVERROES] (Layer 3)</span><br>
-                                        <span class="text-stone-300">Ibn Sina (Avicenna) and Ibn Rushd (Averroes): Pioneers bridging Aristotelian philosophy, metaphysics, and empirical medicine.</span>`,
-
-                'fitnah kubra': `<span class="text-cyan-300 font-bold">[FITNAH KUBRA] (Layer 3)</span><br>
-                                 <span class="text-stone-300">The great historical civil schisms and political fractures following early Islamic leadership transitions that shaped sectarian trajectories.</span>`,
-
-                'sufi shatahat': `<span class="text-cyan-300 font-bold">[SUFI SHATAHT] (Layer 3)</span><br>
-                                 <span class="text-stone-300">Ecstatic utterances and mystical paradoxes spoken by gnostics (such as Al-Hallaj) during deep spiritual transcendence.</span>`,
-
-                'hurufiyyah': `<span class="text-cyan-300 font-bold">[HURUFIYYAH] (Layer 4)</span><br>
-                              <span class="text-stone-300">Esoteric science of letters, numbers, and numerical codes (Abjad) underlying the cosmic structure of creation.</span>`,
-
-                'alchemy': `<span class="text-cyan-300 font-bold">[ALCHEMY] (Layer 4)</span><br>
-                            <span class="text-stone-300">Jabir ibn Hayyan (Geber) and early laboratory experimentation formulas, combining proto-chemistry with spiritual transformation.</span>`,
-
-                'ancient manuscripts': `<span class="text-cyan-300 font-bold">[ANCIENT MANUSCRIPTS] (Layer 4)</span><br>
-                                        <span class="text-stone-300">Preserved historical codices, astronomical charts, and philosophical treatises housed in historical archives.</span>`,
-
-                'contemporary textual critique': `<span class="text-cyan-300 font-bold">[CONTEMPORARY TEXTUAL CRITIQUE] (Layer 5)</span><br>
-                                                  <span class="text-stone-300">Modern hermeneutics and deconstructive analysis applied to classical religious texts.</span>`,
-
-                'tripartite reason': `<span class="text-cyan-300 font-bold">[TRIPARTITE REASON] (Layer 5)</span><br>
-                                      <span class="text-stone-300">Multi-layered epistemic framework balancing sensory perception, rational deduction, and intuitive illumination.</span>`,
-
-                'illuminationism': `<span class="text-cyan-300 font-bold">[ILLUMINATIONISM] (Layer 5)</span><br>
-                                    <span class="text-stone-300">Suhrawardi’s philosophy of light (Hikmat al-Ishraq), arguing reality is a hierarchy of divine illumination.</span>`,
-
-                'sirr al-sirr': `<span class="text-cyan-300 font-bold">[SIRR AL-SIRR] (Layer 6)</span><br>
-                                <span class="text-stone-300">The "Secret of Secrets"—the innermost sanctum of the human spiritual heart beyond ordinary consciousness.</span>`,
-
-                'lost manuscripts': `<span class="text-cyan-300 font-bold">[LOST MANUSCRIPTS] (Layer 6)</span><br>
-                                     <span class="text-stone-300">Works referenced in historical records whose physical copies have vanished into time.</span>`,
-
-                'paradox jahl \'arif': `<span class="text-cyan-300 font-bold">[PARADOX JAHL 'ARIF] (Layer 6)</span><br>
-                                        <span class="text-stone-300">The realization of the Gnostic's conscious ignorance: knowing that absolute comprehension of the Divine Essence is impossible.</span>`,
-
-                'nur muhammad': `<span class="text-cyan-300 font-bold">[NUR MUHAMMAD] (Layer 7)</span><br>
-                                 <span class="text-stone-300">The primordial prophetic light from which all creation and cosmic blueprints were manifested.</span>`,
-
-                'alam al-mithal': `<span class="text-cyan-300 font-bold">[ALAM AL-MITHAL] (Layer 7)</span><br>
-                                  <span class="text-stone-300">The imaginal realm (Mundus Imaginalis)—an intermediary dimension where spiritual realities take subtle forms.</span>`,
-
-                'hadd al-\'aql': `<span class="text-cyan-300 font-bold">[HADD AL-'AQL] (Layer 7)</span><br>
-                                  <span class="text-stone-300">The absolute boundary and limit of human intellect before entering the transcendent unknown.</span>`,
-
-                'dzat mutlaq': `<span class="text-cyan-300 font-bold">[DZAT MUTLAQ] (Layer 8)</span><br>
-                              <span class="text-stone-300">The Absolute Godhead—unconditioned, nameless, and beyond all attributes (The Void / Essence).</span>`,
-
-                'al-\'amah': `<span class="text-cyan-300 font-bold">[AL-'AMAH] (Layer 8)</span><br>
-                             <span class="text-stone-300">The primordial blind cloud or dark mist of unmanifested potential before the creation of the cosmos.</span>`,
-
-                'as-sukt': `<span class="text-cyan-300 font-bold">[AS-SUKT] (Layer 8)</span><br>
-                            <span class="text-stone-300">Silence. The ultimate state beyond language, logic, and descriptions where discursive thought ceases.</span>`
+                'bahrun bila syati': `<span class="text-cyan-300 font-bold">[BAHRUN BILA SYATI (ENDLESS OCEAN)]</span><br>
+                                      <span class="text-stone-300">'A Sea Without a Shore'; the metaphorical description of divine metaphysics and infinite knowledge without boundaries.</span>`
             };
 
             function printToTerminal(text, isCommand = false) {
                 const line = document.createElement('div');
-                
                 if (isCommand) {
                     line.innerHTML = `<span class="text-cyan-600">root@bayt-al-hikmah:~$</span> <span class="text-cyan-300">${text}</span>`;
                 } else {
                     line.className = 'text-stone-400 pl-4 border-l-2 border-cyan-900/60 my-2';
                     line.innerHTML = text;
                 }
-                
                 terminalOutput.appendChild(line);
                 terminalOutput.scrollTop = terminalOutput.scrollHeight;
             }
@@ -941,6 +1116,9 @@
             function handleCommandString(rawCmd) {
                 const cmd = rawCmd.trim().toLowerCase();
                 if (cmd === '') return;
+
+                commandHistory.push(rawCmd.trim());
+                historyIndex = commandHistory.length;
 
                 printToTerminal(rawCmd.trim(), true);
                 
@@ -956,13 +1134,40 @@
             }
 
             terminalInput.addEventListener('keydown', function(e) {
-                (e.key === 'Enter') && (handleCommandString(this.value), this.value = '');
+                if (e.key === 'Enter') {
+                    handleCommandString(this.value);
+                    this.value = '';
+                } else if (e.key === 'ArrowUp') {
+                    if (commandHistory.length > 0 && historyIndex > 0) {
+                        historyIndex--;
+                        this.value = commandHistory[historyIndex];
+                        e.preventDefault();
+                    }
+                } else if (e.key === 'ArrowDown') {
+                    if (commandHistory.length > 0 && historyIndex < commandHistory.length - 1) {
+                        historyIndex++;
+                        this.value = commandHistory[historyIndex];
+                        e.preventDefault();
+                    } else if (historyIndex >= commandHistory.length - 1) {
+                        historyIndex = commandHistory.length;
+                        this.value = '';
+                        e.preventDefault();
+                    }
+                } else if (e.key === 'Tab') {
+                    e.preventDefault();
+                    const query = this.value.trim().toLowerCase();
+                    if (!query) return;
+
+                    const matches = Object.keys(terminalCommands).filter(c => c.startsWith(query));
+                    if (matches.length === 1) {
+                        this.value = matches[0];
+                    } else if (matches.length > 1) {
+                        printToTerminal(`Suggestions: ${matches.map(m => `<span class="text-cyan-300">${m}</span>`).join(', ')}`);
+                    }
+                }
             });
 
-            terminalBackBtn.addEventListener('click', () => {
-                handleCommandString('back');
-            });
-
+            terminalBackBtn.addEventListener('click', () => handleCommandString('back'));
         });
     </script>
 </body>
