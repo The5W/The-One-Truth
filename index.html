@@ -61,19 +61,24 @@
 
     <style>
         body {
-            background-color: #050505;
+            background-color: #080503; /* Warna dasar diubah menjadi rona kayu mahoni yang sangat gelap */
             overflow: hidden; /* Disable default scrolling */
         }
 
-        /* Subtle Islamic Geometric Pattern */
-        .geometry-pattern {
+        /* ASTROLABE BACKGROUND (New) */
+        .astrolabe-bg {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 130vmin; /* Responsive size based on viewport */
+            height: 130vmin;
             pointer-events: none;
             z-index: 1;
-            opacity: 0.03;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 100 100'%3E%3Cpath fill='%23d97706' d='M50 0L55 40L100 50L55 60L50 100L45 60L0 50L45 40Z'/%3E%3C/svg%3E");
-            background-size: 60px 60px;
+            opacity: 0.18; /* Sangat redup agar misterius dan tidak mengganggu teks */
+            /* Efek vignette agar astrolabe memudar ke hitam di bagian pinggirnya */
+            mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 65%);
+            -webkit-mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 65%);
         }
 
         /* Warm Candlelight Ambient Glow */
@@ -82,7 +87,7 @@
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             width: 100vw; height: 100vh;
-            background: radial-gradient(circle, rgba(180, 83, 9, 0.12) 0%, rgba(146, 64, 14, 0.03) 40%, transparent 80%);
+            background: radial-gradient(circle, rgba(217, 119, 6, 0.18) 0%, rgba(146, 64, 14, 0.06) 40%, rgba(69, 26, 3, 0.02) 65%, transparent 100%);
             pointer-events: none;
             z-index: 2;
             transition: background 1.5s ease-in-out;
@@ -180,7 +185,68 @@
         <source src="https://raw.githubusercontent.com/The5W/The-One-Truth/main/Desert%20Journey.mp3" type="audio/mpeg">
     </audio>
 
-    <div class="geometry-pattern"></div>
+    <!-- NEW ASTROLABE BACKGROUND -->
+    <div class="astrolabe-bg">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" class="w-full h-full">
+            <!-- Center Pivot Outline -->
+            <circle cx="400" cy="400" r="395" fill="none" stroke="#78350f" stroke-width="1" />
+            
+            <!-- Mater (Outer rims and degrees) -->
+            <circle cx="400" cy="400" r="380" fill="none" stroke="#b45309" stroke-width="4" />
+            <circle cx="400" cy="400" r="370" fill="none" stroke="#d97706" stroke-width="1" stroke-dasharray="4 6" />
+            <circle cx="400" cy="400" r="360" fill="none" stroke="#b45309" stroke-width="2" />
+            
+            <!-- Degree Ticks -->
+            <circle cx="400" cy="400" r="375" fill="none" stroke="#f59e0b" stroke-width="10" stroke-dasharray="1 9.8" opacity="0.6" />
+            <circle cx="400" cy="400" r="365" fill="none" stroke="#f59e0b" stroke-width="5" stroke-dasharray="2 18" opacity="0.4" />
+            
+            <!-- Rete (Rotating Star Map) -->
+            <g class="animate-[spin_180s_linear_infinite]" transform-origin="400 400">
+                <!-- Ecliptic Circle (Off-center inside the Rete) -->
+                <circle cx="400" cy="270" r="110" fill="none" stroke="#d97706" stroke-width="2" />
+                <circle cx="400" cy="270" r="100" fill="none" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4 4" />
+                
+                <!-- Intricate Arches of the Rete -->
+                <path d="M 80 400 A 320 320 0 0 1 720 400" fill="none" stroke="#92400e" stroke-width="2" />
+                <path d="M 120 400 A 280 280 0 0 0 680 400" fill="none" stroke="#92400e" stroke-width="1.5" />
+                
+                <path d="M 400 80 Q 500 200 650 250" fill="none" stroke="#b45309" stroke-width="1.5" />
+                <path d="M 400 80 Q 300 200 150 250" fill="none" stroke="#b45309" stroke-width="1.5" />
+                <path d="M 400 720 Q 500 600 650 550" fill="none" stroke="#b45309" stroke-width="1.5" />
+                <path d="M 400 720 Q 300 600 150 550" fill="none" stroke="#b45309" stroke-width="1.5" />
+
+                <!-- Star Pointers (Flame/Leaf shapes) -->
+                <path d="M 400 50 L 408 90 L 392 90 Z" fill="#fbbf24" />
+                <path d="M 400 750 L 408 710 L 392 710 Z" fill="#fbbf24" />
+                <path d="M 50 400 L 90 392 L 90 408 Z" fill="#fbbf24" />
+                <path d="M 750 400 L 710 392 L 710 408 Z" fill="#fbbf24" />
+                
+                <!-- Secondary pointers -->
+                <polygon points="150,250 165,260 155,270" fill="#f59e0b" />
+                <polygon points="650,250 635,260 645,270" fill="#f59e0b" />
+                <polygon points="150,550 165,540 155,530" fill="#f59e0b" />
+                <polygon points="650,550 635,540 645,530" fill="#f59e0b" />
+            </g>
+
+            <!-- Alidade (Rotating Ruler) -->
+            <g class="animate-[spin_90s_linear_infinite_reverse]" transform-origin="400 400">
+                <!-- Main Crosshair / Ruler -->
+                <line x1="30" y1="400" x2="770" y2="400" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
+                <line x1="400" y1="30" x2="400" y2="770" stroke="#b45309" stroke-width="1" stroke-dasharray="10 10" opacity="0.5" />
+                
+                <!-- Decorative ruler ends -->
+                <polygon points="20,400 50,392 50,408" fill="#fbbf24" />
+                <polygon points="780,400 750,392 750,408" fill="#fbbf24" />
+                
+                <!-- Center Pin & Rings -->
+                <circle cx="400" cy="400" r="30" fill="#080503" stroke="#f59e0b" stroke-width="2" />
+                <circle cx="400" cy="400" r="10" fill="#fbbf24" />
+                <circle cx="400" cy="400" r="45" fill="none" stroke="#d97706" stroke-width="1" stroke-dasharray="4 4" />
+                <circle cx="400" cy="400" r="60" fill="none" stroke="#92400e" stroke-width="1" />
+            </g>
+        </svg>
+    </div>
+
     <div class="warm-ambient" id="ambient-glow"></div>
     <div class="noise-overlay"></div>
 
@@ -341,15 +407,14 @@
 
             let currentSlideIndex = 0;
             let isAnimating = false;
-            let isPlaying = false;
             let arabicAnimationTimeouts = [];
             
-            // Background glow intensities per slide
+            // Background glow intensities per slide (Disesuaikan agar seimbang dengan latar bermotif kayu)
             const glowStates = [
-                'radial-gradient(circle, rgba(180, 83, 9, 0.12) 0%, rgba(146, 64, 14, 0.03) 40%, transparent 80%)',
-                'radial-gradient(circle, rgba(180, 83, 9, 0.18) 0%, rgba(146, 64, 14, 0.05) 45%, transparent 85%)',
-                'radial-gradient(circle, rgba(217, 119, 6, 0.25) 0%, rgba(180, 83, 9, 0.08) 50%, transparent 90%)',
-                'radial-gradient(circle, rgba(180, 83, 9, 0.15) 0%, rgba(146, 64, 14, 0.04) 40%, transparent 80%)'
+                'radial-gradient(circle, rgba(217, 119, 6, 0.18) 0%, rgba(146, 64, 14, 0.06) 40%, rgba(69, 26, 3, 0.02) 65%, transparent 100%)',
+                'radial-gradient(circle, rgba(217, 119, 6, 0.22) 0%, rgba(146, 64, 14, 0.08) 45%, rgba(69, 26, 3, 0.03) 70%, transparent 100%)',
+                'radial-gradient(circle, rgba(245, 158, 11, 0.28) 0%, rgba(180, 83, 9, 0.1) 50%, rgba(69, 26, 3, 0.04) 75%, transparent 100%)',
+                'radial-gradient(circle, rgba(217, 119, 6, 0.20) 0%, rgba(146, 64, 14, 0.05) 40%, rgba(69, 26, 3, 0.02) 65%, transparent 100%)'
             ];
 
             // 1. SPLASH SCREEN & AUTOPLAY LOGIC
