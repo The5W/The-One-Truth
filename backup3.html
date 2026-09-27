@@ -281,19 +281,44 @@
         </div>
     </header>
 
-    <!-- Interactive Chapter Indicator Sidebar -->
-    <div class="hidden md:flex absolute left-8 lg:left-12 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-3">
-        <div id="chapter-nav-list" class="flex flex-col items-center gap-1.5">
-            <button data-chapter="1" class="chapter-nav-btn text-xs font-display text-amber-500 font-bold tracking-wider hover:text-amber-300 transition-all cursor-pointer p-1 scale-110" title="Chapter 1 (Press 1)">01</button>
-            <button data-chapter="2" class="chapter-nav-btn text-xs font-display text-stone-600 hover:text-stone-300 transition-all cursor-pointer p-1" title="Chapter 2 (Press 2)">02</button>
-            <button data-chapter="3" class="chapter-nav-btn text-xs font-display text-stone-600 hover:text-stone-300 transition-all cursor-pointer p-1" title="Chapter 3 (Press 3)">03</button>
-            <button data-chapter="4" class="chapter-nav-btn text-xs font-display text-stone-600 hover:text-stone-300 transition-all cursor-pointer p-1" title="Chapter 4 (Press 4)">04</button>
-            <button data-chapter="5" class="chapter-nav-btn text-xs font-display text-stone-600 hover:text-stone-300 transition-all cursor-pointer p-1" title="Chapter 5 (Press 5)">05</button>
-            <button data-chapter="6" class="chapter-nav-btn text-xs font-display text-stone-600 hover:text-stone-300 transition-all cursor-pointer p-1" title="Chapter 6 (Press 6)">06</button>
-            <button data-chapter="7" class="chapter-nav-btn text-xs font-display text-stone-600 hover:text-stone-300 transition-all cursor-pointer p-1" title="Chapter 7 (Press 7)">07</button>
-        </div>
-        <div class="w-[1px] h-16 bg-stone-800 relative my-1">
-            <div id="progress-bar" class="absolute top-0 left-0 w-full bg-amber-600 transition-all duration-500" style="height: 14.28%;"></div>
+    <!-- Interactive Chapter Indicator Sidebar (Minimalist Node Tracker) -->
+    <div class="hidden md:flex absolute left-6 lg:left-10 top-1/2 -translate-y-1/2 z-40 flex-col items-center group py-4 cursor-ns-resize">
+        <div id="chapter-nav-list" class="flex flex-col items-center gap-2 relative">
+            <!-- Progress Line Background -->
+            <div class="absolute top-2 bottom-2 left-1/2 -translate-x-1/2 w-[1px] bg-stone-800/40 -z-10"></div>
+            <!-- Active Progress Line -->
+            <div id="progress-bar" class="absolute top-2 left-1/2 -translate-x-1/2 w-[1px] bg-amber-600/80 transition-all duration-700 -z-10" style="height: 0%;"></div>
+
+            <!-- Clickable Nodes (Dots) -->
+            <!-- Kami menggunakan area w-8 h-8 agar sangat mudah diklik tanpa harus mengeker mouse -->
+            <button data-chapter="1" class="chapter-nav-btn relative flex items-center justify-center w-8 h-8 cursor-pointer">
+                <div class="nav-dot w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)] transition-all duration-500 scale-150"></div>
+                <span class="absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-amber-500/90 pointer-events-none">01</span>
+            </button>
+            <button data-chapter="2" class="chapter-nav-btn relative flex items-center justify-center w-8 h-8 cursor-pointer">
+                <div class="nav-dot w-1.5 h-1.5 rounded-full bg-stone-800 group-hover:bg-stone-600 transition-all duration-500"></div>
+                <span class="absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-stone-600 pointer-events-none">02</span>
+            </button>
+            <button data-chapter="3" class="chapter-nav-btn relative flex items-center justify-center w-8 h-8 cursor-pointer">
+                <div class="nav-dot w-1.5 h-1.5 rounded-full bg-stone-800 group-hover:bg-stone-600 transition-all duration-500"></div>
+                <span class="absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-stone-600 pointer-events-none">03</span>
+            </button>
+            <button data-chapter="4" class="chapter-nav-btn relative flex items-center justify-center w-8 h-8 cursor-pointer">
+                <div class="nav-dot w-1.5 h-1.5 rounded-full bg-stone-800 group-hover:bg-stone-600 transition-all duration-500"></div>
+                <span class="absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-stone-600 pointer-events-none">04</span>
+            </button>
+            <button data-chapter="5" class="chapter-nav-btn relative flex items-center justify-center w-8 h-8 cursor-pointer">
+                <div class="nav-dot w-1.5 h-1.5 rounded-full bg-stone-800 group-hover:bg-stone-600 transition-all duration-500"></div>
+                <span class="absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-stone-600 pointer-events-none">05</span>
+            </button>
+            <button data-chapter="6" class="chapter-nav-btn relative flex items-center justify-center w-8 h-8 cursor-pointer">
+                <div class="nav-dot w-1.5 h-1.5 rounded-full bg-stone-800 group-hover:bg-stone-600 transition-all duration-500"></div>
+                <span class="absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-stone-600 pointer-events-none">06</span>
+            </button>
+            <button data-chapter="7" class="chapter-nav-btn relative flex items-center justify-center w-8 h-8 cursor-pointer">
+                <div class="nav-dot w-1.5 h-1.5 rounded-full bg-stone-800 group-hover:bg-stone-600 transition-all duration-500"></div>
+                <span class="absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-stone-600 pointer-events-none">07</span>
+            </button>
         </div>
     </div>
 
@@ -445,13 +470,15 @@
                 </div>
             </div>
 
-            <div id="ch7-content" class="max-w-xl w-full mx-auto lg:mx-0 text-center lg:text-left pt-12 md:pt-16 lg:pt-0 shrink-0 blur-2xl opacity-20 select-none pointer-events-none transition-all duration-1000">
-                <p class="text-[9px] md:text-[10px] text-cyan-500/80 uppercase tracking-[0.3em] mb-4 md:mb-6">Chapter VII : The Next Renaissance</p>
-                <h1 class="font-display font-normal text-3xl sm:text-4xl md:text-[4.5rem] lg:text-[5rem] leading-[1.2] md:leading-[1.1] tracking-tight text-stone-200 drop-shadow-md">
-                    Do not just read the legacy.<br class="hidden lg:block"> 
-                    <span class="text-cyan-400/90 italic block mt-1 lg:mt-0 lg:inline">Compile it. Execute it.</span>
+            <div id="ch7-content" class="max-w-md lg:max-w-xl w-full mx-auto lg:mx-0 text-center lg:text-left pt-12 md:pt-16 lg:pt-0 shrink-0 blur-2xl opacity-20 select-none pointer-events-none transition-all duration-1000 flex flex-col justify-center">
+                <p class="text-[9px] md:text-[10px] text-cyan-500/80 uppercase tracking-[0.3em] mb-4 md:mb-5">Chapter VII : The Next Renaissance</p>
+                
+                <h1 class="font-display font-normal text-4xl sm:text-5xl lg:text-6xl leading-[1.2] md:leading-[1.15] tracking-tight text-stone-200 drop-shadow-md">
+                    Do not just read <br class="hidden md:block"> the legacy. 
+                    <span class="text-cyan-400/90 italic block mt-2 md:mt-4">Compile it. Execute it.</span>
                 </h1>
-                <p class="mt-4 md:mt-8 text-stone-500 font-light text-xs md:text-sm max-w-xl leading-relaxed mx-auto lg:mx-0">
+                
+                <p class="mt-5 md:mt-6 text-stone-400 font-light text-xs md:text-sm max-w-lg leading-relaxed mx-auto lg:mx-0 border-l-0 lg:border-l-2 lg:border-cyan-900/50 lg:pl-5">
                     The next Bayt al-Hikmah will not be built of stone, but of scalable architectures, pure logic, and ethical systems. Seek knowledge, build with purpose, and elevate humanity.
                 </p>
             </div>
@@ -799,15 +826,22 @@
                 
                 currentSlideIndex = newIndex;
                 
+                // Update logika JS untuk Titik Navigasi
                 chapterBtns.forEach((btn, idx) => {
+                    const dot = btn.querySelector('.nav-dot');
+                    const span = btn.querySelector('span');
+                    
                     if (idx === currentSlideIndex) {
-                        btn.className = "chapter-nav-btn text-xs font-display text-amber-500 font-bold tracking-wider hover:text-amber-300 transition-all cursor-pointer p-1 scale-110";
+                        if(dot) dot.className = "nav-dot w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)] transition-all duration-500 scale-150";
+                        if(span) span.className = "absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-amber-500/90 pointer-events-none";
                     } else {
-                        btn.className = "chapter-nav-btn text-xs font-display text-stone-600 hover:text-stone-300 transition-all cursor-pointer p-1";
+                        if(dot) dot.className = "nav-dot w-1.5 h-1.5 rounded-full bg-stone-800 group-hover:bg-stone-600 transition-all duration-500";
+                        if(span) span.className = "absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-stone-600 pointer-events-none";
                     }
                 });
 
-                progressBar.style.height = `${((currentSlideIndex + 1) / slides.length) * 100}%`;
+                // Kalkulasi tinggi progress bar berdasarkan persentase (0% hingga 100%)
+                progressBar.style.height = `${(currentSlideIndex / (slides.length - 1)) * 100}%`;
                 ambientGlow.style.background = glowStates[currentSlideIndex];
 
                 if (currentSlideIndex === 3) {
