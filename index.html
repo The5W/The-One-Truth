@@ -148,7 +148,6 @@
             pointer-events: none;
         }
 
-        /* Staggered elements animation for cinematic entrance */
         /* Arabic Ink Reveal & Right-to-Left Pen Handwriting */
         .arabic-ink-container {
             position: relative;
@@ -280,47 +279,6 @@
             </button>
         </div>
     </header>
-
-    <!-- Interactive Chapter Indicator Sidebar (Minimalist Node Tracker) -->
-    <div class="hidden md:flex absolute left-6 lg:left-10 top-1/2 -translate-y-1/2 z-40 flex-col items-center group py-4 cursor-ns-resize">
-        <div id="chapter-nav-list" class="flex flex-col items-center gap-2 relative">
-            <!-- Progress Line Background -->
-            <div class="absolute top-2 bottom-2 left-1/2 -translate-x-1/2 w-[1px] bg-stone-800/40 -z-10"></div>
-            <!-- Active Progress Line -->
-            <div id="progress-bar" class="absolute top-2 left-1/2 -translate-x-1/2 w-[1px] bg-amber-600/80 transition-all duration-700 -z-10" style="height: 0%;"></div>
-
-            <!-- Clickable Nodes (Dots) -->
-            <!-- Kami menggunakan area w-8 h-8 agar sangat mudah diklik tanpa harus mengeker mouse -->
-            <button data-chapter="1" class="chapter-nav-btn relative flex items-center justify-center w-8 h-8 cursor-pointer">
-                <div class="nav-dot w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)] transition-all duration-500 scale-150"></div>
-                <span class="absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-amber-500/90 pointer-events-none">01</span>
-            </button>
-            <button data-chapter="2" class="chapter-nav-btn relative flex items-center justify-center w-8 h-8 cursor-pointer">
-                <div class="nav-dot w-1.5 h-1.5 rounded-full bg-stone-800 group-hover:bg-stone-600 transition-all duration-500"></div>
-                <span class="absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-stone-600 pointer-events-none">02</span>
-            </button>
-            <button data-chapter="3" class="chapter-nav-btn relative flex items-center justify-center w-8 h-8 cursor-pointer">
-                <div class="nav-dot w-1.5 h-1.5 rounded-full bg-stone-800 group-hover:bg-stone-600 transition-all duration-500"></div>
-                <span class="absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-stone-600 pointer-events-none">03</span>
-            </button>
-            <button data-chapter="4" class="chapter-nav-btn relative flex items-center justify-center w-8 h-8 cursor-pointer">
-                <div class="nav-dot w-1.5 h-1.5 rounded-full bg-stone-800 group-hover:bg-stone-600 transition-all duration-500"></div>
-                <span class="absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-stone-600 pointer-events-none">04</span>
-            </button>
-            <button data-chapter="5" class="chapter-nav-btn relative flex items-center justify-center w-8 h-8 cursor-pointer">
-                <div class="nav-dot w-1.5 h-1.5 rounded-full bg-stone-800 group-hover:bg-stone-600 transition-all duration-500"></div>
-                <span class="absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-stone-600 pointer-events-none">05</span>
-            </button>
-            <button data-chapter="6" class="chapter-nav-btn relative flex items-center justify-center w-8 h-8 cursor-pointer">
-                <div class="nav-dot w-1.5 h-1.5 rounded-full bg-stone-800 group-hover:bg-stone-600 transition-all duration-500"></div>
-                <span class="absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-stone-600 pointer-events-none">06</span>
-            </button>
-            <button data-chapter="7" class="chapter-nav-btn relative flex items-center justify-center w-8 h-8 cursor-pointer">
-                <div class="nav-dot w-1.5 h-1.5 rounded-full bg-stone-800 group-hover:bg-stone-600 transition-all duration-500"></div>
-                <span class="absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-stone-600 pointer-events-none">07</span>
-            </button>
-        </div>
-    </div>
 
     <!-- MAIN SLIDES CONTAINER -->
     <main class="slide-container" id="slides-wrapper">
@@ -546,8 +504,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const slides = document.querySelectorAll('.slide');
-            const chapterBtns = document.querySelectorAll('.chapter-nav-btn');
-            const progressBar = document.getElementById('progress-bar');
             const ambientGlow = document.getElementById('ambient-glow');
             
             // Background ambient gradients for each chapter (01 - 07)
@@ -826,22 +782,6 @@
                 
                 currentSlideIndex = newIndex;
                 
-                // Update logika JS untuk Titik Navigasi
-                chapterBtns.forEach((btn, idx) => {
-                    const dot = btn.querySelector('.nav-dot');
-                    const span = btn.querySelector('span');
-                    
-                    if (idx === currentSlideIndex) {
-                        if(dot) dot.className = "nav-dot w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)] transition-all duration-500 scale-150";
-                        if(span) span.className = "absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-amber-500/90 pointer-events-none";
-                    } else {
-                        if(dot) dot.className = "nav-dot w-1.5 h-1.5 rounded-full bg-stone-800 group-hover:bg-stone-600 transition-all duration-500";
-                        if(span) span.className = "absolute left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] font-mono text-stone-600 pointer-events-none";
-                    }
-                });
-
-                // Kalkulasi tinggi progress bar berdasarkan persentase (0% hingga 100%)
-                progressBar.style.height = `${(currentSlideIndex / (slides.length - 1)) * 100}%`;
                 ambientGlow.style.background = glowStates[currentSlideIndex];
 
                 if (currentSlideIndex === 3) {
@@ -854,18 +794,6 @@
                     isAnimating = false;
                 }, 1200);
             }
-
-            // Click Navigation for Chapter Numbers (01 - 07)
-            chapterBtns.forEach((btn) => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const targetIndex = parseInt(btn.dataset.chapter) - 1;
-                    if (targetIndex !== currentSlideIndex) {
-                        const dir = targetIndex > currentSlideIndex ? 'down' : 'up';
-                        updateSlide(targetIndex, dir, true);
-                    }
-                });
-            });
 
             // Keyboard Navigation (Arrow keys & Direct Numbers 1-7)
             window.addEventListener('keydown', (e) => {
@@ -1029,7 +957,7 @@
                                    <span class="text-stone-300">The canonical mutawatir modes of Quranic recitation, preserved through unbroken oral chains back to the Prophet.</span>`,
 
                 'qira\'at': `<span class="text-cyan-300 font-bold">[QURANIC QIRA'AT]</span><br>
-                           <span class="text-stone-300">Systematized variant recitations of the Quran (e.g., Hafs, Warsh, Qalun) reflecting linguistic richness and divine preservation.</span>`,
+                            <span class="text-stone-300">Systematized variant recitations of the Quran (e.g., Hafs, Warsh, Qalun) reflecting linguistic richness and divine preservation.</span>`,
 
                 // --- LAYER 3 ---
                 'layer 3': `<span class="text-cyan-300 font-bold">[LAYER 3: DEEP SEA - COMPLEX HISTORY & PHILOSOPHY]</span><br>
