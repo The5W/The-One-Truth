@@ -491,7 +491,7 @@
     </main>
 
     <!-- Scroll Indicator -->
-    <div class="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 md:gap-3 opacity-70 pointer-events-none">
+    <div id="scroll-indicator" class="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 md:gap-3 opacity-70 transition-opacity duration-700 pointer-events-none">
         <div class="w-5 h-7 md:w-6 md:h-9 border border-amber-700/50 rounded-full flex justify-center p-1 relative backdrop-blur-sm bg-black/20">
             <div class="w-1 h-1.5 md:h-2 bg-amber-500 rounded-full animate-bounce-subtle shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
         </div>
@@ -758,6 +758,23 @@
             let animationTimeout = null;
             let wheelCooloff = false;
 
+            // Scroll Indicator Auto-Hide Logic
+            const scrollIndicator = document.getElementById('scroll-indicator');
+            let scrollIndicatorTimeout = null;
+
+            function hideScrollIndicator() {
+                if (!scrollIndicator) return;
+                scrollIndicator.style.opacity = '0'; // Sembunyikan saat ada aktivitas
+                
+                clearTimeout(scrollIndicatorTimeout);
+                scrollIndicatorTimeout = setTimeout(() => {
+                    // Munculkan kembali setelah 1.5 detik diam, kecuali di slide terakhir
+                    if (currentSlideIndex < slides.length - 1) {
+                        scrollIndicator.style.opacity = '0.7';
+                    }
+                }, 1500);
+            }
+
             // Smooth Slide Navigation Logic
             function updateSlide(newIndex, direction, force = false) {
                 if (newIndex === currentSlideIndex && !force) return;
@@ -800,6 +817,11 @@
                 const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
                 if (activeTag === 'input' || activeTag === 'textarea') return;
 
+                // Sembunyikan indikator scroll saat navigasi keyboard
+                if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key >= '1' && e.key <= '7')) {
+                    hideScrollIndicator();
+                }
+
                 if (e.key >= '1' && e.key <= '7') {
                     const targetIndex = parseInt(e.key) - 1;
                     if (targetIndex !== currentSlideIndex) {
@@ -820,6 +842,8 @@
 
             // Scroll Wheel Event Handler
             window.addEventListener('wheel', (e) => {
+                hideScrollIndicator(); // Trigger auto-hide
+
                 if (wheelCooloff) return;
                 if (currentSlideIndex === 6 && !isPage7Unlocked) return;
                 if (currentSlideIndex === 6 && terminalContainer.contains(e.target)) return;
@@ -835,10 +859,15 @@
             // Touch Swipe Support
             let touchStartY = 0;
             window.addEventListener('touchstart', e => {
+                hideScrollIndicator(); // Trigger auto-hide
+
                 if (currentSlideIndex === 6 && !isPage7Unlocked) return;
                 if (currentSlideIndex === 6 && terminalContainer.contains(e.target)) return;
                 touchStartY = e.changedTouches[0].screenY;
             });
+            window.addEventListener('touchmove', e => {
+                hideScrollIndicator(); // Trigger auto-hide saat menggeser layar
+            }, { passive: true });
             window.addEventListener('touchend', e => {
                 if (currentSlideIndex === 6 && !isPage7Unlocked) return;
                 if (currentSlideIndex === 6 && terminalContainer.contains(e.target)) return;
