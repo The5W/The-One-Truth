@@ -152,20 +152,23 @@
         .arabic-ink-container {
             position: relative;
             display: inline-block;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1.25rem;
+            line-height: 1.8;
+            overflow: visible;
         }
 
         .arabic-ink {
             white-space: nowrap;
-            clip-path: inset(-20px -20px -20px 100%);
-            -webkit-clip-path: inset(-20px -20px -20px 100%);
+            line-height: 1.8;
+            clip-path: inset(-25px -25px -25px 100%);
+            -webkit-clip-path: inset(-25px -25px -25px 100%);
             transition: clip-path 3.5s cubic-bezier(0.4, 0, 0.2, 1), -webkit-clip-path 3.5s cubic-bezier(0.4, 0, 0.2, 1), filter 3.5s ease-out;
             filter: blur(1.5px) brightness(1.4);
         }
 
         .arabic-ink.reveal {
-            clip-path: inset(-20px -20px -20px -20px);
-            -webkit-clip-path: inset(-20px -20px -20px -20px);
+            clip-path: inset(-25px -25px -25px -25px);
+            -webkit-clip-path: inset(-25px -25px -25px -25px);
             filter: blur(0px) brightness(1);
         }
 
@@ -206,14 +209,30 @@
         }
 
         #draggable-terminal-wrapper {
-            transition: width 0.3s ease, height 0.3s ease;
+            will-change: transform;
+            touch-action: none;
+        }
+
+        /* Custom Scrollbar for Terminal */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(3, 2, 1, 0.5);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(6, 182, 212, 0.3);
+            border-radius: 2px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(6, 182, 212, 0.6);
         }
     </style>
 </head>
 <body class="text-stone-400 font-sans antialiased selection:bg-amber-900/40 selection:text-amber-100">
 
     <!-- Splash Screen -->
-    <div id="splash-screen">
+    <div id="splash-screen" role="button" aria-label="Enter Sanctuary">
         <h1 class="font-display text-3xl md:text-5xl text-amber-600/80 mb-6 drop-shadow-[0_0_15px_rgba(217,119,6,0.3)]">بيت الحكمة</h1>
         <p class="text-stone-500 font-light tracking-[0.3em] uppercase text-xs md:text-sm animate-pulse-slow">Tap to Enter the Sanctuary</p>
     </div>
@@ -223,40 +242,122 @@
         <source src="https://raw.githubusercontent.com/The5W/The-One-Truth/main/Desert%20Journey.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Astrolabe Vector Background -->
-    <div class="astrolabe-bg">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" class="w-full h-full">
-            <circle cx="400" cy="400" r="395" fill="none" stroke="#78350f" stroke-width="1" />
-            <circle cx="400" cy="400" r="380" fill="none" stroke="#b45309" stroke-width="4" />
-            <circle cx="400" cy="400" r="370" fill="none" stroke="#d97706" stroke-width="1" stroke-dasharray="4 6" />
-            <circle cx="400" cy="400" r="360" fill="none" stroke="#b45309" stroke-width="2" />
-            <circle cx="400" cy="400" r="375" fill="none" stroke="#f59e0b" stroke-width="10" stroke-dasharray="1 9.8" opacity="0.6" />
-            
-            <g class="animate-[spin_180s_linear_infinite]" transform-origin="400 400">
-                <circle cx="400" cy="270" r="110" fill="none" stroke="#d97706" stroke-width="2" />
-                <path d="M 80 400 A 320 320 0 0 1 720 400" fill="none" stroke="#92400e" stroke-width="2" />
-                <path d="M 120 400 A 280 280 0 0 0 680 400" fill="none" stroke="#92400e" stroke-width="1.5" />
-                <path d="M 400 80 Q 500 200 650 250" fill="none" stroke="#b45309" stroke-width="1.5" />
-                <path d="M 400 80 Q 300 200 150 250" fill="none" stroke="#b45309" stroke-width="1.5" />
-                <path d="M 400 720 Q 500 600 650 550" fill="none" stroke="#b45309" stroke-width="1.5" />
-                <path d="M 400 720 Q 300 600 150 550" fill="none" stroke="#b45309" stroke-width="1.5" />
-                <polygon points="150,250 165,260 155,270" fill="#f59e0b" />
-                <polygon points="650,250 635,260 645,270" fill="#f59e0b" />
+    <!-- Complex Multi-Layered Astrolabe Vector Background -->
+    <div class="astrolabe-bg" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" class="w-full h-full">
+            <defs>
+                <radialGradient id="astrolabe-glow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.25"/>
+                    <stop offset="60%" stop-color="#d97706" stop-opacity="0.08"/>
+                    <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+                </radialGradient>
+                
+                <filter id="amber-glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" result="blur"/>
+                    <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                </filter>
+            </defs>
+
+            <circle cx="500" cy="500" r="480" fill="url(#astrolabe-glow)" />
+
+            <!-- STATIC LAYER: ASTROLABE FRAME -->
+            <g class="astrolabe-frame">
+                <path d="M 380 90 Q 420 20 500 20 Q 580 20 620 90 Q 560 130 500 115 Q 440 130 380 90 Z" fill="none" stroke="#b45309" stroke-width="2.5" />
+                <path d="M 410 82 Q 445 35 500 35 Q 555 35 590 82" fill="none" stroke="#d97706" stroke-width="1.5" stroke-dasharray="3 3" />
+                <circle cx="500" cy="22" r="16" fill="none" stroke="#f59e0b" stroke-width="2.5" />
+                <circle cx="500" cy="22" r="8" fill="none" stroke="#92400e" stroke-width="1.5" />
+
+                <circle cx="500" cy="530" r="455" fill="none" stroke="#78350f" stroke-width="1.5" />
+                <circle cx="500" cy="530" r="445" fill="none" stroke="#b45309" stroke-width="4" />
+                <circle cx="500" cy="530" r="435" fill="none" stroke="#d97706" stroke-width="1" stroke-dasharray="2 4" />
+                <circle cx="500" cy="530" r="425" fill="none" stroke="#b45309" stroke-width="2" />
+                <circle cx="500" cy="530" r="415" fill="none" stroke="#f59e0b" stroke-width="8" stroke-dasharray="1 8.8" opacity="0.75" />
+                <circle cx="500" cy="530" r="405" fill="none" stroke="#92400e" stroke-width="1.5" />
+                <circle cx="500" cy="530" r="390" fill="none" stroke="#d97706" stroke-width="1" stroke-dasharray="12 4" />
+
+                <line x1="500" y1="70" x2="500" y2="990" stroke="#b45309" stroke-width="0.75" stroke-dasharray="8 6" opacity="0.4" />
+                <line x1="40" y1="530" x2="960" y2="530" stroke="#b45309" stroke-width="0.75" stroke-dasharray="8 6" opacity="0.4" />
             </g>
 
-            <g class="animate-[spin_90s_linear_infinite_reverse]" transform-origin="400 400">
-                <line x1="30" y1="400" x2="770" y2="400" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
-                <line x1="400" y1="30" x2="400" y2="770" stroke="#b45309" stroke-width="1" stroke-dasharray="10 10" opacity="0.5" />
-                <circle cx="400" cy="400" r="30" fill="#080503" stroke="#f59e0b" stroke-width="2" />
-                <circle cx="400" cy="400" r="10" fill="#fbbf24" />
-                <circle cx="400" cy="400" r="60" fill="none" stroke="#92400e" stroke-width="1" />
+            <!-- TYMPAN LINES -->
+            <g class="tympan-lines" opacity="0.85">
+                <circle cx="500" cy="460" r="330" fill="none" stroke="#92400e" stroke-width="1" opacity="0.5" />
+                <circle cx="500" cy="490" r="280" fill="none" stroke="#92400e" stroke-width="1" opacity="0.6" />
+                <circle cx="500" cy="520" r="230" fill="none" stroke="#b45309" stroke-width="1.2" opacity="0.7" />
+                <circle cx="500" cy="550" r="180" fill="none" stroke="#92400e" stroke-width="1" opacity="0.6" />
+                <circle cx="500" cy="580" r="130" fill="none" stroke="#92400e" stroke-width="1" opacity="0.5" />
+
+                <path d="M 110 530 Q 500 280 890 530" fill="none" stroke="#f59e0b" stroke-width="2" opacity="0.8" />
+                <path d="M 160 530 Q 500 350 840 530" fill="none" stroke="#d97706" stroke-width="1.2" />
+                <path d="M 220 530 Q 500 410 780 530" fill="none" stroke="#b45309" stroke-width="1" />
+                <path d="M 110 530 Q 500 780 890 530" fill="none" stroke="#78350f" stroke-width="1" stroke-dasharray="4 4" opacity="0.6" />
+
+                <path d="M 200 750 Q 500 530 800 750" fill="none" stroke="#b45309" stroke-width="1" stroke-dasharray="6 6" />
+                <path d="M 260 820 Q 500 530 740 820" fill="none" stroke="#92400e" stroke-width="1" stroke-dasharray="4 4" />
             </g>
+
+            <!-- LAYER 1: KHATAM OCTAGRAM -->
+            <g class="animate-[spin_240s_linear_infinite_reverse]" transform-origin="500 530">
+                <rect x="260" y="290" width="480" height="480" fill="none" stroke="#d97706" stroke-width="1" opacity="0.35" />
+                <rect x="260" y="290" width="480" height="480" fill="none" stroke="#d97706" stroke-width="1" opacity="0.35" transform="rotate(45 500 530)" />
+                <rect x="260" y="290" width="480" height="480" fill="none" stroke="#b45309" stroke-width="0.75" opacity="0.2" transform="rotate(22.5 500 530)" />
+                <rect x="260" y="290" width="480" height="480" fill="none" stroke="#b45309" stroke-width="0.75" opacity="0.2" transform="rotate(67.5 500 530)" />
+
+                <circle cx="500" cy="530" r="339" fill="none" stroke="#f59e0b" stroke-width="1" stroke-dasharray="2 12" />
+                <circle cx="500" cy="530" r="240" fill="none" stroke="#d97706" stroke-width="1" stroke-dasharray="6 18" />
+            </g>
+
+            <!-- LAYER 2: THE RETE / ANKABUT -->
+            <g class="animate-[spin_120s_linear_infinite]" transform-origin="500 530">
+                <g transform-origin="500 530">
+                    <circle cx="500" cy="405" r="245" fill="none" stroke="#f59e0b" stroke-width="3" filter="url(#amber-glow)" />
+                    <circle cx="500" cy="405" r="233" fill="none" stroke="#b45309" stroke-width="1.5" />
+                    <circle cx="500" cy="405" r="257" fill="none" stroke="#d97706" stroke-width="1" stroke-dasharray="3 5" />
+                    
+                    <line x1="500" y1="160" x2="500" y2="650" stroke="#f59e0b" stroke-width="1" opacity="0.6" />
+                    <line x1="255" y1="405" x2="745" y2="405" stroke="#f59e0b" stroke-width="1" opacity="0.6" />
+                    <line x1="327" y1="305" x2="673" y2="505" stroke="#d97706" stroke-width="0.8" opacity="0.5" />
+                    <line x1="327" y1="505" x2="673" y2="305" stroke="#d97706" stroke-width="0.8" opacity="0.5" />
+                    <line x1="405" y1="227" x2="595" y2="583" stroke="#d97706" stroke-width="0.8" opacity="0.5" />
+                    <line x1="405" y1="583" x2="595" y2="227" stroke="#d97706" stroke-width="0.8" opacity="0.5" />
+                </g>
+
+                <path d="M 180 530 A 320 320 0 1 0 820 530" fill="none" stroke="#d97706" stroke-width="2.5" />
+                
+                <path d="M 500 210 Q 620 230 680 340 T 780 530" fill="none" stroke="#b45309" stroke-width="2" />
+                <path d="M 500 210 Q 380 230 320 340 T 220 530" fill="none" stroke="#b45309" stroke-width="2" />
+                <path d="M 320 340 Q 420 440 500 530" fill="none" stroke="#d97706" stroke-width="1.5" />
+                <path d="M 680 340 Q 580 440 500 530" fill="none" stroke="#d97706" stroke-width="1.5" />
+
+                <polygon points="680,340 695,325 688,348" fill="#fbbf24" />
+                <polygon points="320,340 305,325 312,348" fill="#fbbf24" />
+                <polygon points="220,530 200,540 218,550" fill="#fbbf24" />
+                <polygon points="780,530 800,540 782,550" fill="#fbbf24" />
+                <polygon points="500,210 500,188 508,205" fill="#f59e0b" />
+                <polygon points="500,850 500,872 492,855" fill="#f59e0b" />
+
+                <circle cx="500" cy="530" r="120" fill="none" stroke="#f59e0b" stroke-width="1.5" />
+                <circle cx="500" cy="530" r="70" fill="none" stroke="#92400e" stroke-width="1" stroke-dasharray="4 4" />
+            </g>
+
+            <!-- LAYER 3: ALIDADE RULE -->
+            <g class="animate-[spin_60s_linear_infinite_reverse]" transform-origin="500 530">
+                <line x1="70" y1="530" x2="930" y2="530" stroke="#f59e0b" stroke-width="3" opacity="0.9" filter="url(#amber-glow)" />
+                <line x1="120" y1="526" x2="880" y2="526" stroke="#ffffff" stroke-width="0.75" opacity="0.6" />
+                <line x1="120" y1="534" x2="880" y2="534" stroke="#78350f" stroke-width="0.75" opacity="0.8" />
+
+                <polygon points="70,530 95,520 95,540" fill="#fbbf24" />
+                <polygon points="930,530 905,520 905,540" fill="#fbbf24" />
+            </g>
+
+            <!-- Center Circle -->
+            <circle cx="500" cy="530" r="10" fill="none" stroke="#f59e0b" stroke-width="1.5" opacity="0.8" />
         </svg>
     </div>
 
     <!-- Ambient Glow container -->
     <div class="warm-ambient" id="ambient-glow" style="background: radial-gradient(circle, rgba(180, 83, 9, 0.16) 0%, rgba(120, 53, 15, 0.05) 45%, transparent 70%);"></div>
-    <div class="noise-overlay"></div>
+    <div class="noise-overlay" aria-hidden="true"></div>
 
     <!-- Header Navigation -->
     <header class="absolute top-6 left-6 right-6 md:top-10 md:left-12 md:right-12 z-40 flex justify-between items-start md:items-center">
@@ -269,7 +370,7 @@
         </div>
         
         <div class="flex items-center gap-8 mt-1 md:mt-0">
-            <button id="audio-toggle" class="text-amber-500 font-light text-[9px] md:text-[10px] uppercase tracking-[0.2em] transition-all duration-700 flex items-center gap-2 md:gap-3 group cursor-pointer">
+            <button id="audio-toggle" aria-label="Toggle ambient audio" class="text-amber-500 font-light text-[9px] md:text-[10px] uppercase tracking-[0.2em] transition-all duration-700 flex items-center gap-2 md:gap-3 group cursor-pointer">
                 <div class="flex items-end gap-[2px] h-3 md:h-4">
                     <div id="bar-1" class="w-[2px] h-1 bg-amber-400 animate-electric-1 transition-all duration-300"></div>
                     <div id="bar-2" class="w-[2px] h-2 bg-amber-400 animate-electric-2 transition-all duration-300"></div>
@@ -419,7 +520,7 @@
                     </p>
 
                     <div class="flex flex-col gap-3">
-                        <input type="text" id="riddle-input" class="bg-black/60 border border-amber-900/50 rounded px-3 py-2 md:px-4 md:py-2.5 text-amber-400 font-mono text-sm text-center outline-none focus:border-amber-500 placeholder-amber-900/40" placeholder="Enter password / name..." autocomplete="off">
+                        <input type="text" id="riddle-input" aria-label="Riddle password input" class="bg-black/60 border border-amber-900/50 rounded px-3 py-2 md:px-4 md:py-2.5 text-amber-400 font-mono text-sm text-center outline-none focus:border-amber-500 placeholder-amber-900/40" placeholder="Enter password / name..." autocomplete="off">
                         <button id="riddle-submit-btn" class="bg-amber-800 hover:bg-amber-700 text-stone-100 font-sans text-[10px] md:text-xs uppercase tracking-[0.2em] py-2.5 md:py-3 rounded transition-colors shadow-md cursor-pointer">
                             Unlock Chapter VII
                         </button>
@@ -459,11 +560,11 @@
                     <div id="terminal-header" class="w-full bg-cyan-950/20 border-b border-cyan-900/40 p-2 flex items-center justify-between cursor-grab active:cursor-grabbing touch-none">
                         <span class="text-cyan-600/80 text-[9px] md:text-[10px] tracking-widest uppercase pointer-events-none">Al-Iksr OS</span>
                         <div class="flex items-center gap-2">
-                            <button id="terminal-back-btn" class="text-[9px] md:text-[10px] text-cyan-400 bg-cyan-950/60 border border-cyan-800/40 px-1.5 py-0.5 rounded hover:bg-cyan-900/50 transition-colors uppercase tracking-wider cursor-pointer">
+                            <button id="terminal-back-btn" aria-label="Return to main view" class="text-[9px] md:text-[10px] text-cyan-400 bg-cyan-950/60 border border-cyan-800/40 px-1.5 py-0.5 rounded hover:bg-cyan-900/50 transition-colors uppercase tracking-wider cursor-pointer">
                                 [ Back ]
                             </button>
                             <div class="hidden md:flex items-center gap-1.5 ml-1">
-                                <button id="terminal-size-btn" class="w-4 h-4 rounded-full bg-cyan-900/40 border border-cyan-700/50 flex items-center justify-center text-[9px] text-cyan-300 hover:bg-cyan-700 hover:text-white transition-colors cursor-pointer" title="Maximize / Restore">
+                                <button id="terminal-size-btn" aria-label="Maximize or restore terminal" class="w-4 h-4 rounded-full bg-cyan-900/40 border border-cyan-700/50 flex items-center justify-center text-[9px] text-cyan-300 hover:bg-cyan-700 hover:text-white transition-colors cursor-pointer" title="Maximize / Restore">
                                     +
                                 </button>
                                 <div class="w-2.5 h-2.5 rounded-full bg-stone-800/80"></div>
@@ -471,17 +572,17 @@
                         </div>
                     </div>
 
-                    <div id="terminal-output" class="flex-1 p-3 md:p-4 overflow-y-auto space-y-1.5 custom-scrollbar pb-16 md:pb-20">
+                    <div id="terminal-output" role="region" aria-live="polite" aria-label="Terminal Console Output" class="flex-1 p-3 md:p-4 overflow-y-auto space-y-1.5 custom-scrollbar pb-16 md:pb-20">
                         <div class="text-stone-500 mb-4 leading-relaxed">
                             System Initialized. Kernel v1.0.0<br>
                             Authentication successful. Welcome, Scholar.<br>
-                            Type <span class="text-cyan-300">help</span> to begin sequence or tap <span class="text-cyan-300">[ Back ]</span> anytime.
+                            Type <span class="text-cyan-300">help</span> to begin sequence, <span class="text-cyan-300">munazarah</span> for dialectics manual, or <span class="text-cyan-300">clear</span> (<span class="text-cyan-300">Ctrl+L</span>).
                         </div>
                     </div>
 
                     <div class="absolute bottom-0 left-0 w-full p-2 md:p-4 pt-1 pb-2 md:pb-4 flex items-center gap-2 bg-[#030201] border-t border-cyan-950/40">
                         <span class="text-cyan-600">root@bayt:~$</span>
-                        <input type="text" id="terminal-input" class="bg-transparent border-none outline-none flex-1 text-cyan-300 font-mono text-[10px] md:text-sm focus:ring-0 placeholder-cyan-900/40" placeholder="Enter command..." autocomplete="off" spellcheck="false">
+                        <input type="text" id="terminal-input" aria-label="Terminal command input" class="bg-transparent border-none outline-none flex-1 text-cyan-300 font-mono text-[10px] md:text-sm focus:ring-0 placeholder-cyan-900/40" placeholder="Enter command..." autocomplete="off" spellcheck="false">
                     </div>
                 </div>
 
@@ -500,13 +601,26 @@
         </span>
     </div>
 
+    <!-- System Status Bar Widget (Bottom Right Corner) -->
+    <div id="system-status-widget" class="fixed bottom-4 right-4 md:bottom-8 md:right-12 z-40 flex items-center gap-2 md:gap-3 bg-black/60 border border-amber-900/40 backdrop-blur-md px-3 py-1.5 md:px-4 md:py-2 rounded-full text-[9px] md:text-[11px] font-mono text-stone-400 opacity-85 hover:opacity-100 transition-all duration-500 shadow-[0_0_20px_rgba(0,0,0,0.8)] pointer-events-auto">
+        <span id="widget-date" class="text-stone-400 uppercase tracking-wider">---, -- --- ----</span>
+        <span class="text-stone-700">|</span>
+        <span id="widget-time" class="text-amber-400 font-medium tracking-widest">00:00:00</span>
+        <span class="text-stone-700">|</span>
+        <div id="widget-battery-container" class="flex items-center gap-1.5 text-stone-400">
+            <svg id="widget-battery-icon" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 10.5h.75a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-.75.75H21M3.75 6A2.25 2.25 0 0 0 1.5 8.25v7.5A2.25 2.25 0 0 0 3.75 18h13.5A2.25 2.25 0 0 0 19.5 15.75v-7.5A2.25 2.25 0 0 0 17.25 6H3.75z" />
+            </svg>
+            <span id="widget-battery-text" class="text-[9px] md:text-[10px]">--%</span>
+        </div>
+    </div>
+
     <!-- MAIN JAVASCRIPT LOGIC -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const slides = document.querySelectorAll('.slide');
             const ambientGlow = document.getElementById('ambient-glow');
             
-            // Background ambient gradients for each chapter (01 - 07)
             const glowStates = [
                 'radial-gradient(circle, rgba(180, 83, 9, 0.16) 0%, rgba(120, 53, 15, 0.05) 45%, transparent 70%)',
                 'radial-gradient(circle, rgba(180, 83, 9, 0.22) 0%, rgba(146, 64, 14, 0.08) 45%, transparent 70%)',
@@ -540,7 +654,6 @@
             let synthOsc = null;
             let synthGain = null;
 
-            // Arabic Verse Calligraphy Reveal Animation (Right to Left with Pen Nib)
             const penNib = document.getElementById('pen-nib');
             let arabicAnimTimer = null;
 
@@ -548,7 +661,6 @@
                 if (!arabicVerse) return;
                 if (arabicAnimTimer) clearTimeout(arabicAnimTimer);
 
-                // Matikan transisi sementara agar reset posisi terjadi secara instan (0ms)
                 arabicVerse.style.transition = 'none';
                 if (penNib) penNib.style.transition = 'none';
 
@@ -559,16 +671,14 @@
                     penNib.style.left = '100%';
                 }
 
-                void arabicVerse.offsetWidth; // Force reflow browser
+                void arabicVerse.offsetWidth;
             }
 
             function triggerArabicAnimation() {
                 if (!arabicVerse) return;
 
-                // Reset keadaan awal
                 resetArabicAnimation();
 
-                // Jalankan kembali animasi setelah slide Chapter IV mulai muncul
                 arabicAnimTimer = setTimeout(() => {
                     arabicVerse.style.transition = '';
                     if (penNib) penNib.style.transition = '';
@@ -580,12 +690,11 @@
                         penNib.style.left = '0%';
                         setTimeout(() => {
                             if (penNib) penNib.style.opacity = '0';
-                        }, 3500); // Fade out pena setelah selesai menulis
+                        }, 3500);
                     }
                 }, 400);
             }
 
-            // Web Audio API Ambient Pad Generator (Fallback)
             function startSynthAmbient() {
                 try {
                     if (!audioCtx) {
@@ -600,7 +709,7 @@
                         synthGain = audioCtx.createGain();
                         
                         synthOsc.type = 'sine';
-                        synthOsc.frequency.setValueAtTime(110, audioCtx.currentTime); // Low A note
+                        synthOsc.frequency.setValueAtTime(110, audioCtx.currentTime);
                         
                         synthGain.gain.setValueAtTime(0.01, audioCtx.currentTime);
                         synthGain.gain.exponentialRampToValueAtTime(0.08, audioCtx.currentTime + 3);
@@ -650,12 +759,11 @@
                 }
             }
 
-            // Splash Screen Click Event
             if (splashScreen) {
                 splashScreen.addEventListener('click', () => {
                     splashScreen.style.opacity = '0';
                     splashScreen.style.visibility = 'hidden';
-                    toggleAudioState(); // Autoplay atmospheric sound upon user tap
+                    toggleAudioState();
                 });
             }
 
@@ -664,26 +772,36 @@
                 toggleAudioState();
             });
 
-            // Draggable Terminal Logic
             let isDragging = false;
             let startX, startY;
             let currentX = 0;
             let currentY = 0;
             let isMaximized = false;
+            let animationFrameId = null;
+
+            const isMobileDevice = () => window.innerWidth < 768;
 
             const handleDragStart = (clientX, clientY) => {
-                if (isMaximized) return;
+                if (isMaximized || isMobileDevice()) return;
                 isDragging = true;
                 startX = clientX - currentX;
                 startY = clientY - currentY;
+                
+                draggableTerminalWrapper.style.transition = 'none';
                 terminalHeader.style.cursor = 'grabbing';
             };
 
             const handleDragMove = (clientX, clientY) => {
-                if (!isDragging || isMaximized) return;
+                if (!isDragging || isMaximized || isMobileDevice()) return;
                 currentX = clientX - startX;
                 currentY = clientY - startY;
-                draggableTerminalWrapper.style.transform = `translate(${currentX}px, ${currentY}px)`;
+
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                animationFrameId = requestAnimationFrame(() => {
+                    if (isDragging) {
+                        draggableTerminalWrapper.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+                    }
+                });
             };
 
             const handleDragEnd = () => {
@@ -699,48 +817,48 @@
             window.addEventListener('mousemove', (e) => handleDragMove(e.clientX, e.clientY));
             window.addEventListener('mouseup', handleDragEnd);
 
-            // Touch Dragging Support
             terminalHeader.addEventListener('touchstart', (e) => {
-                if (e.touches.length === 1) {
+                if (e.touches.length === 1 && !isMobileDevice()) {
                     handleDragStart(e.touches[0].clientX, e.touches[0].clientY);
                 }
             }, { passive: true });
 
             window.addEventListener('touchmove', (e) => {
-                if (isDragging && e.touches.length === 1) {
+                if (isDragging && e.touches.length === 1 && !isMobileDevice()) {
                     handleDragMove(e.touches[0].clientX, e.touches[0].clientY);
                 }
             }, { passive: true });
 
             window.addEventListener('touchend', handleDragEnd);
 
-            // Maximize / Restore Toggle
             terminalSizeBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 isMaximized = !isMaximized;
+                
+                draggableTerminalWrapper.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+                
                 if (isMaximized) {
-                    draggableTerminalWrapper.style.transform = 'translate(0px, 0px)';
+                    draggableTerminalWrapper.style.transform = 'translate3d(0px, 0px, 0)';
                     draggableTerminalWrapper.style.position = 'fixed';
                     draggableTerminalWrapper.style.top = '50%';
                     draggableTerminalWrapper.style.left = '50%';
-                    draggableTerminalWrapper.style.transform = 'translate(-50%, -50%)';
-                    draggableTerminalWrapper.style.width = '85vw';
-                    draggableTerminalWrapper.style.height = '80vh';
+                    draggableTerminalWrapper.style.transform = 'translate3d(-50%, -50%, 0)';
+                    draggableTerminalWrapper.style.width = '90vw';
+                    draggableTerminalWrapper.style.height = '82vh';
                     draggableTerminalWrapper.style.maxWidth = 'none';
                     terminalSizeBtn.innerText = '-';
                 } else {
                     draggableTerminalWrapper.style.position = 'relative';
                     draggableTerminalWrapper.style.top = 'auto';
                     draggableTerminalWrapper.style.left = 'auto';
-                    draggableTerminalWrapper.style.transform = `translate(${currentX}px, ${currentY}px)`;
+                    draggableTerminalWrapper.style.transform = isMobileDevice() ? 'none' : `translate3d(${currentX}px, ${currentY}px, 0)`;
                     draggableTerminalWrapper.style.width = '100%';
                     draggableTerminalWrapper.style.maxWidth = '500px';
-                    draggableTerminalWrapper.style.height = '380px';
+                    draggableTerminalWrapper.style.height = isMobileDevice() ? '300px' : '380px';
                     terminalSizeBtn.innerText = '+';
                 }
             });
 
-            // Lock & Riddle elements
             const page7LockOverlay = document.getElementById('page7-lock-overlay');
             const page7LockSvg = document.getElementById('page7-lock-svg');
             const riddleInput = document.getElementById('riddle-input');
@@ -758,30 +876,24 @@
             let animationTimeout = null;
             let wheelCooloff = false;
 
-            // Scroll Indicator Auto-Hide Logic
             const scrollIndicator = document.getElementById('scroll-indicator');
             let scrollIndicatorTimeout = null;
 
             function hideScrollIndicator() {
                 if (!scrollIndicator) return;
-                scrollIndicator.style.opacity = '0'; // Sembunyikan saat ada aktivitas
+                scrollIndicator.style.opacity = '0';
                 
                 clearTimeout(scrollIndicatorTimeout);
                 scrollIndicatorTimeout = setTimeout(() => {
-                    // Munculkan kembali setelah 1.5 detik diam, kecuali di slide terakhir
                     if (currentSlideIndex < slides.length - 1) {
                         scrollIndicator.style.opacity = '0.7';
                     }
                 }, 1500);
             }
 
-            // Smooth Slide Navigation Logic
             function updateSlide(newIndex, direction, force = false) {
                 if (newIndex === currentSlideIndex && !force) return;
                 if (newIndex < 0 || newIndex >= slides.length) return;
-                if (currentSlideIndex === 6 && direction === 'up' && !isPage7Unlocked) {
-                    return; 
-                }
 
                 if (isAnimating && !force) return;
                 isAnimating = true;
@@ -812,12 +924,10 @@
                 }, 1200);
             }
 
-            // Keyboard Navigation (Arrow keys & Direct Numbers 1-7)
             window.addEventListener('keydown', (e) => {
                 const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
                 if (activeTag === 'input' || activeTag === 'textarea') return;
 
-                // Sembunyikan indikator scroll saat navigasi keyboard
                 if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key >= '1' && e.key <= '7')) {
                     hideScrollIndicator();
                 }
@@ -840,12 +950,10 @@
                 }
             });
 
-            // Scroll Wheel Event Handler
             window.addEventListener('wheel', (e) => {
-                hideScrollIndicator(); // Trigger auto-hide
+                hideScrollIndicator();
 
                 if (wheelCooloff) return;
-                if (currentSlideIndex === 6 && !isPage7Unlocked) return;
                 if (currentSlideIndex === 6 && terminalContainer.contains(e.target)) return;
                 
                 if (Math.abs(e.deltaY) > 15) {
@@ -856,30 +964,37 @@
                 }
             }, { passive: true });
 
-            // Touch Swipe Support
             let touchStartY = 0;
             window.addEventListener('touchstart', e => {
-                hideScrollIndicator(); // Trigger auto-hide
+                hideScrollIndicator();
 
-                if (currentSlideIndex === 6 && !isPage7Unlocked) return;
                 if (currentSlideIndex === 6 && terminalContainer.contains(e.target)) return;
                 touchStartY = e.changedTouches[0].screenY;
             });
             window.addEventListener('touchmove', e => {
-                hideScrollIndicator(); // Trigger auto-hide saat menggeser layar
+                hideScrollIndicator();
             }, { passive: true });
             window.addEventListener('touchend', e => {
-                if (currentSlideIndex === 6 && !isPage7Unlocked) return;
                 if (currentSlideIndex === 6 && terminalContainer.contains(e.target)) return;
                 let touchEndY = e.changedTouches[0].screenY;
                 if (touchStartY - touchEndY > 50) updateSlide(currentSlideIndex + 1, 'down');
                 if (touchEndY - touchStartY > 50) updateSlide(currentSlideIndex - 1, 'up');
             });
 
-            // Riddle Check
             function checkRiddle() {
                 const val = riddleInput.value.trim().toLowerCase();
-                if (val === 'muhammad') {
+                const validAnswers = [
+                    'muhammad',
+                    'prophet muhammad',
+                    'muhammad saw',
+                    'nabi muhammad',
+                    'rasulullah',
+                    'prophet muhammad saw',
+                    'muhammad pbuh',
+                    'muhammad pbu h'
+                ];
+
+                if (validAnswers.includes(val)) {
                     isPage7Unlocked = true;
                     
                     const ch7Content = document.getElementById('ch7-content');
@@ -906,7 +1021,6 @@
                 if (e.key === 'Enter') checkRiddle();
             });
 
-            // Terminal Unlock
             terminalLockOverlay.addEventListener('click', (e) => {
                 e.stopPropagation();
                 isTerminalUnlocked = true;
@@ -918,7 +1032,6 @@
                 }, 350);
             });
 
-            // Terminal Commands Engine
             terminalContainer.addEventListener('click', () => {
                 if (isTerminalUnlocked) terminalInput.focus();
             });
@@ -926,19 +1039,71 @@
             const commandHistory = [];
             let historyIndex = -1;
 
+            const commandAliases = {
+                'l1': 'layer 1', 'layer1': 'layer 1', 'ch1': 'layer 1', '1': 'layer 1',
+                'l2': 'layer 2', 'layer2': 'layer 2', 'ch2': 'layer 2', '2': 'layer 2',
+                'l3': 'layer 3', 'layer3': 'layer 3', 'ch3': 'layer 3', '3': 'layer 3',
+                'l4': 'layer 4', 'layer4': 'layer 4', 'ch4': 'layer 4', '4': 'layer 4',
+                'l5': 'layer 5', 'layer5': 'layer 5', 'ch5': 'layer 5', '5': 'layer 5',
+                'l6': 'layer 6', 'layer6': 'layer 6', 'ch6': 'layer 6', '6': 'layer 6',
+                'l7': 'layer 7', 'layer7': 'layer 7', 'ch7': 'layer 7', '7': 'layer 7',
+                'l8': 'layer 8', 'layer8': 'layer 8', 'ch8': 'layer 8', '8': 'layer 8',
+                'cls': 'clear',
+                'sound': 'audio', 'music': 'audio',
+                'qiraat': "quranic qira'at", 'quranic qiraat': "quranic qira'at",
+                'sirr al sirr': 'sirr al-sirr', 'sirralsirr': 'sirr al-sirr',
+                'jahl arif': 'jahl arif',
+                'debates': 'munazarah', 'polemics': 'munazarah', 'dialogue': 'munazarah',
+                'logic': 'mantiq', 'fallacies': 'mantiq',
+                'faq': 'misconceptions', 'objections': 'misconceptions'
+            };
+
             const terminalCommands = {
                 'help': `AVAILABLE COMMANDS:<br>
-                         <span class="text-cyan-300">help</span>    - Show manual<br>
-                         <span class="text-cyan-300">status</span>  - Check system integrity<br>
-                         <span class="text-cyan-300">iceberg</span> - View Islamic Iceberg Taxonomy<br>
-                         <span class="text-cyan-300">layer [1-8]</span> - Access specific layer (e.g., 'layer 1')<br>
-                         <span class="text-cyan-300">[item name]</span> - Type any taxonomy term for details<br>
-                         <span class="text-cyan-300">back</span>    - Return to main view<br>
-                         <span class="text-cyan-300">clear</span>   - Clear terminal output`,
-                
-                'status': `<span class="text-green-500">System optimal.</span> Logic gates: stable. Taxonomy DB synchronized with Iceberg chart.`,
+                         <span class="text-cyan-300">help</span>          - Show manual<br>
+                         <span class="text-cyan-300">status</span>        - Check system integrity<br>
+                         <span class="text-cyan-300">audio</span>         - Toggle / check ambient sound<br>
+                         <span class="text-cyan-300">iceberg</span>       - View Islamic Iceberg Taxonomy<br>
+                         <span class="text-cyan-300">munazarah</span>     - Dialectic & debate methodology<br>
+                         <span class="text-cyan-300">mantiq</span>        - Formal logic & Fallacy analysis<br>
+                         <span class="text-cyan-300">misconceptions</span>- Refutations of common polemics<br>
+                         <span class="text-cyan-300">layer [1-8]</span>    - Access specific layer (or <span class="text-cyan-300">l1-l8</span>)<br>
+                         <span class="text-cyan-300">back</span>          - Return to main view<br>
+                         <span class="text-cyan-300">clear</span>         - Clear output (<span class="text-cyan-300">Ctrl+L</span>)`,
+
+                'status': `<span class="text-green-500">System optimal.</span> Logic gates: stable. Taxonomy DB synchronized with Iceberg chart. Dialectic defense engine active.`,
                 'clear': `CLEAR_FLAG`,
                 'back': `Returned to main navigation view.<br>Type <span class="text-cyan-300">iceberg</span> to view taxonomy levels or <span class="text-cyan-300">help</span> for options.`,
+
+                // --- NEW DIALECTIC & PHILOSOPHICAL DEFENSE MODULES ---
+                'munazarah': `<span class="text-cyan-300 font-bold">[ADAB AL-BAHTH WA AL-MUNAZARAH (CLASSICAL DIALECTICS)]</span><br>
+                              <span class="text-stone-300">Classical Islamic scholarship never avoided scrutiny; it created structured peer-review and debate protocols centuries before modern academia.</span><br><br>
+                              > <span class="text-cyan-200">Three Principles of Intellectual Engagement:</span><br>
+                              1. <span class="text-amber-300">In Kunta Naqilan Fa 'Alaika Bi As-Sihhah</span> (If quoting evidence, verify its authentic historical transmission).<br>
+                              2. <span class="text-amber-300">Wa In Kunta Mudda'iyan Fa 'Alaika Bi Ad-Dalil</span> (If making a claim, provide rigorous logical proof).<br>
+                              3. <span class="text-amber-300">Tanzih & Adab</span> (Debate to uncover truth, not to seek personal victory or insult opponents).`,
+
+                'mantiq': `<span class="text-cyan-300 font-bold">[MANTIQ (FORMAL LOGIC & FALLACY ANALYSIS)]</span><br>
+                           <span class="text-stone-300">Islamic rationalists (e.g. Al-Ghazali in 'Miyar al-Ilm') adopted Aristotelian syllogisms to detect flawed polemical arguments.</span><br><br>
+                           > <span class="text-cyan-200">Common Polemical Fallacies Identified:</span><br>
+                           • <span class="text-rose-300">Strawman (Mughalatah):</span> Distorting complex theological nuances into oversimplified caricatures.<br>
+                           • <span class="text-rose-300">Anachronism:</span> Judging 7th-century socio-legal norms using 21st-century ideological frameworks.<br>
+                           • <span class="text-rose-300">Cherry-picking (Takhiyur):</span> Quoting weak or isolated historical reports out of context while ignoring universal principles (*Usul*).`,
+
+                'misconceptions': `<span class="text-cyan-300 font-bold">[RATIONAL RESPONSES TO COMMON POLEMICS]</span><br>
+                                   <span class="text-stone-300">Explore specific academic breakdowns by typing the keywords below:</span><br><br>
+                                   > <span class="text-cyan-200">faith-and-reason</span> - Response to "Islam opposes science"<br>
+                                   > <span class="text-cyan-200">textual-integrity</span> - Response to "Quran transmission claims"<br>
+                                   > <span class="text-cyan-200">historical-context</span> - Methodology for analyzing 7th-century history`,
+
+                'faith-and-reason': `<span class="text-cyan-300 font-bold">[RESPONSE: SCIENCE & REASON IN ISLAM]</span><br>
+                                     <span class="text-stone-300">Polemics often project European medieval Galileo-era church conflicts onto Islamic history. In reality, Islamic empirical observation (*I'tibar*) was considered a form of worship (*Ibadah*). Scholars like Ibn al-Haytham (father of scientific method) and Ibn Sina were devoted theologians whose research stemmed directly from Quranic calls to observe the cosmos.</span>`,
+
+                'textual-integrity': `<span class="text-cyan-300 font-bold">[RESPONSE: TEXTUAL TRANSMISSION]</span><br>
+                                      <span class="text-stone-300">Unlike ancient texts relying solely on isolated late manuscripts, the Quran was preserved through dual-redundancy: oral mass-memorization (*Tawatur*) alongside standardized written codices (*Rasm Uthmani*), cross-verified continuously across thousands of independent transmission chains.</span>`,
+
+                'historical-context': `<span class="text-cyan-300 font-bold">[RESPONSE: HISTORICAL CONTEXTUALIZATION]</span><br>
+                                       <span class="text-stone-300">Intellectual honesty requires evaluating historical figures within their sociopolitical milieu (*Asbab al-Nuzul* and *Maqasid*). Isolated historical incidents cannot be understood without analyzing legal objectives, treaty obligations, and ambient norms of antiquity.</span>`,
 
                 'iceberg': `THE ISLAMIC ICEBERG: A COMPREHENSIVE TAXONOMY OF THOUGHT, THEOLOGY, & METAPHYSICS<br>
                             <span class="text-stone-600">---------------------------------------------------------</span><br>
@@ -1019,7 +1184,7 @@
                             <span class="text-stone-300">Early proto-chemistry and laboratory methodology established by Jabir Ibn Hayyan (Geber), blending material science with spiritual transformation.</span>`,
 
                 'ancient manuscripts': `<span class="text-cyan-300 font-bold">[ANCIENT MANUSCRIPTS]</span><br>
-                                      <span class="text-stone-300">Rarity of classic handwritten scrolls, palimpsests, and historical treatises detailing medieval science, theology, and philosophy.</span>`,
+                                     <span class="text-stone-300">Rarity of classic handwritten scrolls, palimpsests, and historical treatises detailing medieval science, theology, and philosophy.</span>`,
 
                 // --- LAYER 5 ---
                 'layer 5': `<span class="text-cyan-300 font-bold">[LAYER 5: DEEPEST LAYERS - ABYSSAL ZONE]</span><br>
@@ -1050,9 +1215,6 @@
 
                 'jahl arif': `<span class="text-cyan-300 font-bold">[PARADOX: JAHL 'ARIF]</span><br>
                               <span class="text-stone-300">The paradox of the 'Ignorance of the Knower'; the realization that ultimate knowledge culminates in recognizing the limits of reason before Divine Mystery.</span>`,
-
-                'paradox jahl arif': `<span class="text-cyan-300 font-bold">[PARADOX: JAHL 'ARIF]</span><br>
-                                      <span class="text-stone-300">Acknowledging that true intellectual mastery leads to humble awe and awareness of ultimate unresolvable transcendence.</span>`,
 
                 // --- LAYER 7 ---
                 'layer 7': `<span class="text-cyan-300 font-bold">[LAYER 7: ALAM AL-GHAYB & ESOTERIC COSMOLOGY]</span><br>
@@ -1105,14 +1267,25 @@
             }
 
             function handleCommandString(rawCmd) {
-                const cmd = rawCmd.trim().toLowerCase();
+                const raw = rawCmd.trim();
+                let cmd = raw.toLowerCase();
                 if (cmd === '') return;
 
-                commandHistory.push(rawCmd.trim());
+                commandHistory.push(raw);
                 historyIndex = commandHistory.length;
 
-                printToTerminal(rawCmd.trim(), true);
+                printToTerminal(raw, true);
                 
+                if (commandAliases[cmd]) {
+                    cmd = commandAliases[cmd];
+                }
+
+                if (cmd === 'audio') {
+                    toggleAudioState();
+                    printToTerminal(`Ambient Audio State: <span class="${isAudioPlaying ? 'text-green-400' : 'text-amber-400'}">${isAudioPlaying ? 'ONLINE / PLAYING' : 'MUTED / PAUSED'}</span>`);
+                    return;
+                }
+
                 if (terminalCommands[cmd]) {
                     if (terminalCommands[cmd] === 'CLEAR_FLAG') {
                         terminalOutput.innerHTML = '';
@@ -1120,11 +1293,17 @@
                         printToTerminal(terminalCommands[cmd]);
                     }
                 } else {
-                    printToTerminal(`Command or item not found: '<span class="text-red-400">${cmd}</span>'. Type 'help' for available commands or 'iceberg' to view taxonomy.`);
+                    printToTerminal(`Command or item not found: '<span class="text-red-400">${raw}</span>'. Type 'help' for available commands or 'iceberg' to view taxonomy.`);
                 }
             }
 
             terminalInput.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key.toLowerCase() === 'l') {
+                    e.preventDefault();
+                    terminalOutput.innerHTML = '';
+                    return;
+                }
+
                 if (e.key === 'Enter') {
                     handleCommandString(this.value);
                     this.value = '';
@@ -1149,7 +1328,9 @@
                     const query = this.value.trim().toLowerCase();
                     if (!query) return;
 
-                    const matches = Object.keys(terminalCommands).filter(c => c.startsWith(query));
+                    const allCmds = [...Object.keys(terminalCommands), ...Object.keys(commandAliases)];
+                    const matches = [...new Set(allCmds)].filter(c => c.startsWith(query));
+                    
                     if (matches.length === 1) {
                         this.value = matches[0];
                     } else if (matches.length > 1) {
@@ -1159,6 +1340,60 @@
             });
 
             terminalBackBtn.addEventListener('click', () => handleCommandString('back'));
+
+            const widgetDate = document.getElementById('widget-date');
+            const widgetTime = document.getElementById('widget-time');
+            const widgetBatteryText = document.getElementById('widget-battery-text');
+            const widgetBatteryIcon = document.getElementById('widget-battery-icon');
+
+            function updateSystemClock() {
+                const now = new Date();
+                const dateOptions = { weekday: 'short', month: 'short', day: '2-digit', year: 'numeric' };
+                if (widgetDate) {
+                    widgetDate.innerText = now.toLocaleDateString('en-US', dateOptions).toUpperCase();
+                }
+
+                if (widgetTime) {
+                    const hrs = String(now.getHours()).padStart(2, '0');
+                    const mins = String(now.getMinutes()).padStart(2, '0');
+                    const secs = String(now.getSeconds()).padStart(2, '0');
+                    widgetTime.innerText = `${hrs}:${mins}:${secs}`;
+                }
+            }
+
+            updateSystemClock();
+            setInterval(updateSystemClock, 1000);
+
+            if ('getBattery' in navigator) {
+                navigator.getBattery().then(battery => {
+                    function updateBatteryStatus() {
+                        const level = Math.round(battery.level * 100);
+                        const isCharging = battery.charging;
+                        
+                        if (widgetBatteryText) {
+                            widgetBatteryText.innerText = `${level}%${isCharging ? ' ⚡' : ''}`;
+                        }
+
+                        if (widgetBatteryIcon) {
+                            if (isCharging) {
+                                widgetBatteryIcon.setAttribute('class', 'w-3.5 h-3.5 text-emerald-400 shrink-0 animate-pulse');
+                            } else if (level <= 20) {
+                                widgetBatteryIcon.setAttribute('class', 'w-3.5 h-3.5 text-rose-400 shrink-0');
+                            } else {
+                                widgetBatteryIcon.setAttribute('class', 'w-3.5 h-3.5 text-amber-500 shrink-0');
+                            }
+                        }
+                    }
+
+                    updateBatteryStatus();
+                    battery.addEventListener('levelchange', updateBatteryStatus);
+                    battery.addEventListener('chargingchange', updateBatteryStatus);
+                }).catch(() => {
+                    if (widgetBatteryText) widgetBatteryText.innerText = 'PWR';
+                });
+            } else {
+                if (widgetBatteryText) widgetBatteryText.innerText = 'PWR';
+            }
         });
     </script>
 </body>
